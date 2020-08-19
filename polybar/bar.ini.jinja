@@ -1,5 +1,7 @@
-[bar/example]
-monitor = ${env:MONITOR:}
+{% for output in outputs %}
+
+[bar/{{ output.name }}]
+monitor = {{ output.name }}
 width = 100%
 height = 27
 ;offset-x = 1%
@@ -30,9 +32,11 @@ modules-left = i3
 modules-center = ;polybar-windows
 modules-right = mpd filesystem pulseaudio-control memory cpu wlan eth battery temperature date powermenu
 
+{% if output.primary %}
 tray-position = right
 tray-padding = 2
 ;tray-background = #0063ff
+{% endif %}
 
 ;wm-restack = bspwm
 ;wm-restack = i3
@@ -47,3 +51,6 @@ scroll-down = i3wm-wsprev
 
 cursor-click = pointer
 cursor-scroll = ns-resize
+
+enable-ipc = true
+{% endfor %}

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# Terminate already running bar instances
+polybar-msg cmd quit
+
+{% for output in outputs %}
+polybar --reload {{ output.name }} &
+{%- endfor %}
+
+echo "Bars launched..."

@@ -2,3 +2,4 @@ Xlib
 pip-tools
 randrctl
 xcffib
+jinja2

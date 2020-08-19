@@ -1,7 +1,9 @@
+from typing import List
+from randrctl.model import XrandrConnection
 import xcffib
 import time
-import os
 import pathlib
+from jinja2 import Template
 
 from randrctl.xrandr import Xrandr
 import xcffib.randr as RandR
@@ -20,16 +22,24 @@ def startup():
     # may as well flush()
     conn.flush()
 
-def assemble_polybar():
+def assemble_polybar(outputs: List[XrandrConnection]):
     config = ""
     for f in sorted(pathlib.Path("polybar").iterdir()):
-        config += f.read_text() + "\n\n"
+        if f.name.endswith(".ini"):
+            config += f.read_text() + "\n\n"
+        elif f.name.endswith(".ini.jinja"):
+            template = Template(f.read_text())
+            output = template.render(outputs=outputs)
+            config += output + "\n\n"
+        else:
+            raise Exception(f)
     pathlib.Path("~/.config/polybar/config").expanduser().write_text(config)
+    pathlib.Path("~/.config/polybar/launch.sh").expanduser().write_text(Template(open("launch.sh.jinja").read()).render(outputs=outputs))
 
 def configure():
     for output in xr.get_connected_outputs():
         print(output.name, output.display.edid, output.crtc)
-    assemble_polybar()
+    assemble_polybar(xr.get_connected_outputs())
 
 def run():
     startup()
