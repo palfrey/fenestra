@@ -1,8 +1,11 @@
+from enum import Enum
+import subprocess
 from typing import List
 from randrctl.model import XrandrConnection
 import xcffib
 import time
 import pathlib
+import pyudev
 from jinja2 import Template
 
 from randrctl.xrandr import Xrandr
@@ -58,6 +61,42 @@ def run():
             break
 
         configure()
+
+udev_context = pyudev.Context()
+
+
+class Keyboard(Enum):
+    MAC = 1
+    PC = 2
+
+keyboard_state = None
+
+def set_keyboard_state():
+    global udev_context, keyboard_state
+    for device in udev_context.list_devices(subsystem='usb'):
+        if device.properties.get("ID_VENDOR_ID") == "05ac" and device.properties.get('ID_MODEL_ID') == "0250":
+            # Matias keyboard
+            if keyboard_state != Keyboard.MAC:
+                print("Setting keyboard state to Mac")
+                subprocess.check_call(["setxkbmap", "-model", "macbook79", "-layout", "gb", "-verbose", "10"])
+                keyboard_state = Keyboard.MAC
+            break
+    else:
+        if keyboard_state != Keyboard.PC:
+            # Default laptop keyboard
+            print("Setting keyboard state to PC")
+            subprocess.check_call(["setxkbmap", "-layout", "gb", "-verbose", "10"])
+            keyboard_state = Keyboard.PC
+
+set_keyboard_state()
+
+monitor = pyudev.Monitor.from_netlink(udev_context)
+monitor.filter_by('usb')
+def log_event(action, device):
+    set_keyboard_state()
+
+observer = pyudev.MonitorObserver(monitor, log_event)
+observer.start()
 
 conn = xcffib.connect()
 setup = conn.get_setup()

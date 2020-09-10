@@ -3,3 +3,4 @@ pip-tools
 randrctl
 xcffib
 jinja2
+pyudev

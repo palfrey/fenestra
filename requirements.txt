@@ -11,9 +11,10 @@ jinja2==2.11.2            # via -r requirements.in
 markupsafe==1.1.1         # via jinja2
 pip-tools==5.3.1          # via -r requirements.in
 pycparser==2.20           # via cffi
+pyudev==0.22.0            # via -r requirements.in
 pyyaml==3.13              # via randrctl
 randrctl==1.8.2           # via -r requirements.in
-six==1.15.0               # via pip-tools, xcffib, xlib
+six==1.15.0               # via pip-tools, pyudev, xcffib, xlib
 xcffib==0.10.1            # via -r requirements.in
 xlib==0.21                # via -r requirements.in
 
