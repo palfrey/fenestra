@@ -85,7 +85,7 @@ def set_keyboard_state():
         if keyboard_state != Keyboard.PC:
             # Default laptop keyboard
             print("Setting keyboard state to PC")
-            subprocess.check_call(["setxkbmap", "-layout", "gb", "-verbose", "10"])
+            subprocess.check_call(["setxkbmap", "-model", "pc104", "-layout", "gb", "-verbose", "10"])
             keyboard_state = Keyboard.PC
 
 set_keyboard_state()
