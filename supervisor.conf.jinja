@@ -1,0 +1,45 @@
+[supervisord]
+pidfile = {{ config_folder }}/supervisord.pid
+logfile = {{ config_folder }}/supervisord.log
+
+[unix_http_server]
+file = {{ config_folder }}/supervisord.socket
+
+[supervisorctl]
+serverurl = unix://{{ config_folder }}/supervisord.socket
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+{% for output in outputs %}
+[program:polybar-{{ output.name }}]
+command = /bin/polybar --reload {{ output.name }}
+stdout_logfile = {{ config_folder }}/logs/polybar-{{ output.name }}.log
+redirect_stderr = true
+{% endfor %}
+
+[program:blueman]
+command = /bin/blueman-applet
+stdout_logfile = {{ config_folder }}/logs/blueman.log
+redirect_stderr = true
+
+[program:udiskie]
+command = /bin/udiskie -ans
+stdout_logfile = {{ config_folder }}/logs/udiskie.log
+redirect_stderr = true
+
+[program:xflux]
+command = /home/palfrey/Downloads/xflux -l -0.14 -g 51.33 -nofork
+stdout_logfile = {{ config_folder }}/logs/xflux.log
+redirect_stderr = true
+
+[program:albert]
+command = /bin/albert
+stdout_logfile = {{ config_folder }}/logs/albert.log
+redirect_stderr = true
+
+[program:dropbox]
+command = bash -c "dropbox running && docker start || echo \"Docker already running\""
+stdout_logfile = {{ config_folder }}/logs/dropbox.log
+redirect_stderr = true
+startsecs = 0

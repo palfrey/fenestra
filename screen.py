@@ -37,7 +37,7 @@ def assemble_polybar(outputs: List[XrandrConnection]):
         else:
             raise Exception(f)
     pathlib.Path("~/.config/polybar/config").expanduser().write_text(config)
-    pathlib.Path("~/.config/polybar/launch.sh").expanduser().write_text(Template(open("launch.sh.jinja").read()).render(outputs=outputs))
+    pathlib.Path("~/.config/supervisor/supervisor.conf").expanduser().write_text(Template(open("supervisor.conf.jinja").read()).render(config_folder=pathlib.Path("~/.config/supervisor").expanduser(), outputs=outputs))
 
 def configure():
     for output in xr.get_connected_outputs():
