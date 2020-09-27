@@ -10,9 +10,10 @@ from jinja2 import Template
 
 from randrctl.xrandr import Xrandr
 import xcffib.randr as RandR
-from xcffib.randr import NotifyMask, ScreenChangeNotifyEvent
+from xcffib.randr import NotifyMask
 
 xr = Xrandr(None, None)
+
 
 def startup():
     """Hook up XCB_RANDR_NOTIFY_MASK_SCREEN_CHANGE"""
@@ -21,9 +22,10 @@ def startup():
     # xcb._add_ext(key, randrExtension, _events, _errors)
     # is stored in xcb.randr.key and retrieved in some very odd manner =>
     randr = conn(RandR.key)
-    randr.SelectInput(root.root, NotifyMask.ScreenChange | NotifyMask.OutputChange )
+    randr.SelectInput(root.root, NotifyMask.ScreenChange | NotifyMask.OutputChange)
     # may as well flush()
     conn.flush()
+
 
 def assemble_polybar(outputs: List[XrandrConnection]):
     config = ""
@@ -37,12 +39,19 @@ def assemble_polybar(outputs: List[XrandrConnection]):
         else:
             raise Exception(f)
     pathlib.Path("~/.config/polybar/config").expanduser().write_text(config)
-    pathlib.Path("~/.config/supervisor/supervisor.conf").expanduser().write_text(Template(open("supervisor.conf.jinja").read()).render(config_folder=pathlib.Path("~/.config/supervisor").expanduser(), outputs=outputs))
+    pathlib.Path("~/.config/supervisor/supervisor.conf").expanduser().write_text(
+        Template(open("supervisor.conf.jinja").read()).render(
+            config_folder=pathlib.Path("~/.config/supervisor").expanduser(),
+            outputs=outputs,
+        )
+    )
+
 
 def configure():
     for output in xr.get_connected_outputs():
         print(output.name, output.display.edid, output.crtc)
     assemble_polybar(xr.get_connected_outputs())
+
 
 def run():
     startup()
@@ -62,6 +71,7 @@ def run():
 
         configure()
 
+
 udev_context = pyudev.Context()
 
 
@@ -69,31 +79,52 @@ class Keyboard(Enum):
     MAC = 1
     PC = 2
 
+
 keyboard_state = None
+
 
 def set_keyboard_state():
     global udev_context, keyboard_state
-    for device in udev_context.list_devices(subsystem='usb'):
-        if device.properties.get("ID_VENDOR_ID") == "05ac" and device.properties.get('ID_MODEL_ID') == "0250":
+    for device in udev_context.list_devices(subsystem="usb"):
+        if (
+            device.properties.get("ID_VENDOR_ID") == "05ac"
+            and device.properties.get("ID_MODEL_ID") == "0250"
+        ):
             # Matias keyboard
             if keyboard_state != Keyboard.MAC:
                 print("Setting keyboard state to Mac")
-                subprocess.check_call(["setxkbmap", "-model", "macbook79", "-layout", "gb", "-verbose", "10"])
+                subprocess.check_call(
+                    [
+                        "setxkbmap",
+                        "-model",
+                        "macbook79",
+                        "-layout",
+                        "gb",
+                        "-verbose",
+                        "10",
+                    ]
+                )
                 keyboard_state = Keyboard.MAC
             break
     else:
         if keyboard_state != Keyboard.PC:
             # Default laptop keyboard
             print("Setting keyboard state to PC")
-            subprocess.check_call(["setxkbmap", "-model", "pc104", "-layout", "gb", "-verbose", "10"])
+            subprocess.check_call(
+                ["setxkbmap", "-model", "pc104", "-layout", "gb", "-verbose", "10"]
+            )
             keyboard_state = Keyboard.PC
+
 
 set_keyboard_state()
 
 monitor = pyudev.Monitor.from_netlink(udev_context)
-monitor.filter_by('usb')
+monitor.filter_by("usb")
+
+
 def log_event(action, device):
     set_keyboard_state()
+
 
 observer = pyudev.MonitorObserver(monitor, log_event)
 observer.start()
