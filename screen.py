@@ -15,18 +15,6 @@ from xcffib.randr import NotifyMask
 xr = Xrandr(None, None)
 
 
-def startup():
-    """Hook up XCB_RANDR_NOTIFY_MASK_SCREEN_CHANGE"""
-    # In the xcb.randr module, the result of
-    # key = xcb.ExtensionKey('RANDR')
-    # xcb._add_ext(key, randrExtension, _events, _errors)
-    # is stored in xcb.randr.key and retrieved in some very odd manner =>
-    randr = conn(RandR.key)
-    randr.SelectInput(root.root, NotifyMask.ScreenChange | NotifyMask.OutputChange)
-    # may as well flush()
-    conn.flush()
-
-
 class Keyboard(Enum):
     MAC = 1
     PC = 2
@@ -92,24 +80,34 @@ class Info:
     def update_outputs(self):
         self.outputs = xr.get_connected_outputs()
 
-    def log_event(action, device):
+    def log_usb_event(action, device):
         info.set_keyboard_state()
         info.assemble_configs()
 
     def listen_usb(self):
         usb_monitor = pyudev.Monitor.from_netlink(self.udev_context)
         usb_monitor.filter_by("usb")
-        observer = pyudev.MonitorObserver(usb_monitor, self.log_event)
+        observer = pyudev.MonitorObserver(usb_monitor, self.log_usb_event)
         observer.start()
 
 
 info = Info()
 
 
-def configure():
+def on_screen_change():
     info.update_outputs()
     info.assemble_configs()
 
+def startup():
+    """Hook up XCB_RANDR_NOTIFY_MASK_SCREEN_CHANGE"""
+    # In the xcb.randr module, the result of
+    # key = xcb.ExtensionKey('RANDR')
+    # xcb._add_ext(key, randrExtension, _events, _errors)
+    # is stored in xcb.randr.key and retrieved in some very odd manner =>
+    randr = conn(RandR.key)
+    randr.SelectInput(root.root, NotifyMask.ScreenChange | NotifyMask.OutputChange)
+    # may as well flush()
+    conn.flush()
 
 def run():
     startup()
@@ -127,7 +125,7 @@ def run():
             print("Unexpected error received: %s" % error.message)
             break
 
-        configure()
+        on_screen_change()
 
 
 info.set_keyboard_state()
@@ -138,5 +136,5 @@ setup = conn.get_setup()
 # setup.roots holds a list of screens (just one in our case) #
 root = setup.roots[0]
 
-configure()
+on_screen_change()
 run()
