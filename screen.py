@@ -1,6 +1,6 @@
 from enum import Enum
 import subprocess
-from typing import List
+from typing import List, Optional
 from randrctl.model import XrandrConnection
 import xcffib
 import time
@@ -27,30 +27,88 @@ def startup():
     conn.flush()
 
 
-def assemble_polybar(outputs: List[XrandrConnection]):
-    config = ""
-    for f in sorted(pathlib.Path("polybar").iterdir()):
-        if f.name.endswith(".ini"):
-            config += f.read_text() + "\n\n"
-        elif f.name.endswith(".ini.jinja"):
-            template = Template(f.read_text())
-            output = template.render(outputs=outputs)
-            config += output + "\n\n"
-        else:
-            raise Exception(f)
-    pathlib.Path("~/.config/polybar/config").expanduser().write_text(config)
-    pathlib.Path("~/.config/supervisor/supervisor.conf").expanduser().write_text(
-        Template(open("supervisor.conf.jinja").read()).render(
-            config_folder=pathlib.Path("~/.config/supervisor").expanduser(),
-            outputs=outputs,
+class Keyboard(Enum):
+    MAC = 1
+    PC = 2
+
+
+class Info:
+    outputs: List[XrandrConnection]
+    keyboard_state: Optional[Keyboard] = None
+
+    def __init__(self):
+        self.udev_context = pyudev.Context()
+
+    def assemble_configs(self):
+        config = ""
+        for f in sorted(pathlib.Path("polybar").iterdir()):
+            if f.name.endswith(".ini"):
+                config += f.read_text() + "\n\n"
+            elif f.name.endswith(".ini.jinja"):
+                template = Template(f.read_text())
+                output = template.render(outputs=self.outputs)
+                config += output + "\n\n"
+            else:
+                raise Exception(f)
+        pathlib.Path("~/.config/polybar/config").expanduser().write_text(config)
+        pathlib.Path("~/.config/supervisor/supervisor.conf").expanduser().write_text(
+            Template(open("supervisor.conf.jinja").read()).render(
+                config_folder=pathlib.Path("~/.config/supervisor").expanduser(),
+                outputs=self.outputs,
+            )
         )
-    )
+
+    def set_keyboard_state(self):
+        for device in self.udev_context.list_devices(subsystem="usb"):
+            if (
+                device.properties.get("ID_VENDOR_ID") == "05ac"
+                and device.properties.get("ID_MODEL_ID") == "0250"
+            ):
+                # Matias keyboard
+                if self.keyboard_state != Keyboard.MAC:
+                    print("Setting keyboard state to Mac")
+                    subprocess.check_call(
+                        [
+                            "setxkbmap",
+                            "-model",
+                            "macbook79",
+                            "-layout",
+                            "gb",
+                            "-verbose",
+                            "10",
+                        ]
+                    )
+                    keyboard_state = Keyboard.MAC
+                break
+        else:
+            if self.keyboard_state != Keyboard.PC:
+                # Default laptop keyboard
+                print("Setting keyboard state to PC")
+                subprocess.check_call(
+                    ["setxkbmap", "-model", "pc104", "-layout", "gb", "-verbose", "10"]
+                )
+                self.keyboard_state = Keyboard.PC
+
+    def update_outputs(self):
+        self.outputs = xr.get_connected_outputs()
+
+    def log_event(action, device):
+        info.set_keyboard_state()
+        info.assemble_configs()
+
+    def listen_usb(self):
+        usb_monitor = pyudev.Monitor.from_netlink(self.udev_context)
+        usb_monitor.filter_by("usb")
+        observer = pyudev.MonitorObserver(usb_monitor, self.log_event)
+        observer.start()
+
+
+info = Info()
 
 
 def configure():
-    for output in xr.get_connected_outputs():
-        print(output.name, output.display.edid, output.crtc)
-    assemble_polybar(xr.get_connected_outputs())
+    info.update_outputs()
+    info.assemble_configs()
 
 
 def run():
@@ -72,62 +130,8 @@ def run():
         configure()
 
 
-udev_context = pyudev.Context()
-
-
-class Keyboard(Enum):
-    MAC = 1
-    PC = 2
-
-
-keyboard_state = None
-
-
-def set_keyboard_state():
-    global udev_context, keyboard_state
-    for device in udev_context.list_devices(subsystem="usb"):
-        if (
-            device.properties.get("ID_VENDOR_ID") == "05ac"
-            and device.properties.get("ID_MODEL_ID") == "0250"
-        ):
-            # Matias keyboard
-            if keyboard_state != Keyboard.MAC:
-                print("Setting keyboard state to Mac")
-                subprocess.check_call(
-                    [
-                        "setxkbmap",
-                        "-model",
-                        "macbook79",
-                        "-layout",
-                        "gb",
-                        "-verbose",
-                        "10",
-                    ]
-                )
-                keyboard_state = Keyboard.MAC
-            break
-    else:
-        if keyboard_state != Keyboard.PC:
-            # Default laptop keyboard
-            print("Setting keyboard state to PC")
-            subprocess.check_call(
-                ["setxkbmap", "-model", "pc104", "-layout", "gb", "-verbose", "10"]
-            )
-            keyboard_state = Keyboard.PC
-
-
-set_keyboard_state()
-
-monitor = pyudev.Monitor.from_netlink(udev_context)
-monitor.filter_by("usb")
-
-
-def log_event(action, device):
-    set_keyboard_state()
-
-
-observer = pyudev.MonitorObserver(monitor, log_event)
-observer.start()
+info.set_keyboard_state()
+info.listen_usb()
 
 conn = xcffib.connect()
 setup = conn.get_setup()
