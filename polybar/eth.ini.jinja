@@ -1,6 +1,8 @@
+{% for device in network.devices|selectattr("DEVTYPE", "undefined")|selectattr("ID_NET_NAME", "defined") %}
+
 [module/eth]
 type = internal/network
-interface = enxc03ebac351f5
+interface = {{ device.INTERFACE }}
 interval = 3.0
 
 format-connected-underline = #55aa55
@@ -13,3 +15,4 @@ format-disconnected =
 ;format-disconnected-underline = ${self.format-connected-underline}
 ;label-disconnected = %ifname% disconnected
 ;label-disconnected-foreground = ${colors.foreground-alt}
+{% endfor %}
