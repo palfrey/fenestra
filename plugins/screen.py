@@ -1,3 +1,4 @@
+import subprocess
 from threading import Thread
 from typing import List
 from randrctl.model import XrandrConnection
@@ -7,8 +8,6 @@ import time
 from randrctl.xrandr import Xrandr
 import xcffib.randr as RandR
 from xcffib.randr import NotifyMask
-
-config = [{"eDP-1": {}, "DP-2": {}, "DP-1-1": {}}]
 
 
 class Plugin(Thread):
@@ -57,6 +56,7 @@ class Plugin(Thread):
 
     def on_screen_change(self):
         self.outputs = self.xr.get_connected_outputs()
+        subprocess.check_output(["randrctl", "auto"])
         self.parent.on_change()
 
 
