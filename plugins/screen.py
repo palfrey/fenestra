@@ -8,6 +8,9 @@ from randrctl.xrandr import Xrandr
 import xcffib.randr as RandR
 from xcffib.randr import NotifyMask
 
+config = [{"eDP-1": {}, "DP-2": {}, "DP-1-1": {}}]
+
+
 class Plugin(Thread):
     outputs: List[XrandrConnection]
 
@@ -25,16 +28,18 @@ class Plugin(Thread):
         # xcb._add_ext(key, randrExtension, _events, _errors)
         # is stored in xcb.randr.key and retrieved in some very odd manner =>
         randr = self.conn(RandR.key)
-        randr.SelectInput(self.root.root, NotifyMask.ScreenChange | NotifyMask.OutputChange)
+        randr.SelectInput(
+            self.root.root, NotifyMask.ScreenChange | NotifyMask.OutputChange
+        )
         # may as well flush()
         self.conn.flush()
-    
+        self.on_screen_change()
+
     def create(self):
         self.start()
         return self
 
     def run(self):
-        self.on_screen_change()        
         while True:
             try:
                 event = self.conn.poll_for_event()
@@ -53,3 +58,16 @@ class Plugin(Thread):
     def on_screen_change(self):
         self.outputs = self.xr.get_connected_outputs()
         self.parent.on_change()
+
+
+if __name__ == "__main__":
+
+    class Parent:
+        def on_change(self):
+            pass
+
+    plugin = Plugin(Parent())
+    thread = plugin.create()
+    for o in plugin.outputs:
+        print(o)
+    thread.join()

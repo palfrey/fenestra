@@ -16,11 +16,13 @@ class DeviceWrapper:
 
 class Plugin:
     def __init__(self, parent):
-        self.parent = parent        
+        self.parent = parent
         self.udev_context = pyudev.Context()
 
     def log_net_event(self, action, device):
-        self.devices = [DeviceWrapper(d) for d in self.udev_context.list_devices(subsystem="net")]
+        self.devices = [
+            DeviceWrapper(d) for d in self.udev_context.list_devices(subsystem="net")
+        ]
         self.parent.on_change()
 
     def create(self):
@@ -28,8 +30,9 @@ class Plugin:
         monitor = pyudev.Monitor.from_netlink(self.udev_context)
         monitor.filter_by("net")
         observer = pyudev.MonitorObserver(monitor, self.log_net_event)
-        observer.start()        
+        observer.start()
         return observer
+
 
 if __name__ == "__main__":
     plugin = Plugin(None)

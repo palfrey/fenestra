@@ -13,7 +13,7 @@ class Plugin:
     keyboard_state: Optional[Keyboard] = None
 
     def __init__(self, parent):
-        self.parent = parent        
+        self.parent = parent
         self.udev_context = pyudev.Context()
         self.set_keyboard_state()
 
