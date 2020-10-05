@@ -1,12 +1,12 @@
 import subprocess
+import time
 from threading import Thread
 from typing import List
-from randrctl.model import XrandrConnection
-import xcffib
-import time
 
-from randrctl.xrandr import Xrandr
+import xcffib
 import xcffib.randr as RandR
+from randrctl.model import XrandrConnection
+from randrctl.xrandr import Xrandr
 from xcffib.randr import NotifyMask
 
 
