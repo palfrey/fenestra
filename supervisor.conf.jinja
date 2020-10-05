@@ -47,3 +47,9 @@ command = bash -c "dropbox running && docker start || echo \"Docker already runn
 stdout_logfile = {{ config_folder }}/logs/dropbox.log
 redirect_stderr = true
 startsecs = 0
+
+[program:feh]
+command = feh --bg-max /home/palfrey/Dropbox/Tom/Photos/backgrounds/squirrels.jpg
+stdout_logfile = {{ config_folder }}/logs/feh.log
+redirect_stderr = true
+startsecs = 0
