@@ -1,4 +1,5 @@
 import pyudev
+from ppretty import ppretty
 
 
 class DeviceWrapper:
@@ -15,6 +16,9 @@ class DeviceWrapper:
 
 
 class Plugin:
+    def __str__(self):
+        return ppretty(self)
+
     def __init__(self, parent):
         self.parent = parent
         self.udev_context = pyudev.Context()
@@ -35,8 +39,14 @@ class Plugin:
 
 
 if __name__ == "__main__":
-    plugin = Plugin(None)
+
+    class Parent:
+        def on_change(self):
+            pass
+
+    plugin = Plugin(Parent())
     thread = plugin.create()
     for d in plugin.devices:
         print(list(d.device.properties.items()))
+    print(plugin)
     thread.join()

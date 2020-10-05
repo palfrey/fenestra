@@ -5,6 +5,7 @@ from typing import List
 
 import xcffib
 import xcffib.randr as RandR
+from ppretty import ppretty
 from randrctl.model import XrandrConnection
 from randrctl.xrandr import Xrandr
 from xcffib.randr import NotifyMask
@@ -12,6 +13,9 @@ from xcffib.randr import NotifyMask
 
 class Plugin(Thread):
     outputs: List[XrandrConnection]
+
+    def __str__(self):
+        return ppretty(self)
 
     def __init__(self, parent):
         Thread.__init__(self)
@@ -32,13 +36,13 @@ class Plugin(Thread):
         )
         # may as well flush()
         self.conn.flush()
+        self.on_screen_change()
 
     def create(self):
         self.start()
         return self
 
     def run(self):
-        self.on_screen_change()
         while True:
             try:
                 event = self.conn.poll_for_event()

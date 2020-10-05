@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Optional
 
 import pyudev
+from ppretty import ppretty
 
 
 class Keyboard(Enum):
@@ -12,6 +13,9 @@ class Keyboard(Enum):
 
 class Plugin:
     keyboard_state: Optional[Keyboard] = None
+
+    def __str__(self):
+        return ppretty(self)
 
     def __init__(self, parent):
         self.parent = parent

@@ -4,12 +4,15 @@ import pathlib
 import subprocess
 
 from jinja2 import Template
+from ppretty import ppretty
 
 
 class Fenestra:
     def on_change(self):
+        if not self.ready:
+            return
         config = ""
-        print("Updating config")
+        # print("Updating config", ppretty(self.config))
         for f in sorted(pathlib.Path("polybar").iterdir()):
             if f.name.endswith(".ini"):
                 config += f.read_text() + "\n\n"
@@ -50,6 +53,7 @@ class Fenestra:
     def __init__(self):
         self.plugins = {}
         self.config = {}
+        self.ready = False
 
         for fname in os.listdir("plugins"):
             base, ext = os.path.splitext(fname)
@@ -61,13 +65,14 @@ class Fenestra:
 
     def run(self):
         threads = []
-        for name in self.plugins.keys():
-            self.config[name] = None
         for name, plugin in self.plugins.items():
             print(f"Running {plugin}")
             instance = plugin.Plugin(self)
             self.config[name] = instance
             threads.append(instance.create())
+
+        self.ready = True
+        self.on_change()
 
         for thread in threads:
             thread.join()
