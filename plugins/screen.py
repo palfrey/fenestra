@@ -32,13 +32,13 @@ class Plugin(Thread):
         )
         # may as well flush()
         self.conn.flush()
-        self.on_screen_change()
 
     def create(self):
         self.start()
         return self
 
     def run(self):
+        self.on_screen_change()
         while True:
             try:
                 event = self.conn.poll_for_event()
