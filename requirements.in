@@ -5,6 +5,7 @@ jinja2
 pyudev
 pre-commit
 ppretty
+supervisor
 
 # FIXME: 1.9.0 not in pypi. See https://github.com/edio/randrctl/issues/25
 git+https://github.com/edio/randrctl.git@1.9.0#egg=randrctl
