@@ -14,6 +14,8 @@ class Fenestra:
         config = ""
         # print("Updating config", ppretty(self.config))
         for f in sorted(pathlib.Path("polybar").iterdir()):
+            if f.name.startswith("."):
+                continue
             if f.name.endswith(".ini"):
                 config += f.read_text() + "\n\n"
             elif f.name.endswith(".ini.jinja"):
