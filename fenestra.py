@@ -35,22 +35,18 @@ class Fenestra:
                 **self.config,
             )
         )
-        subprocess.check_output(
+        subprocess.run(
             ["supervisorctl", "-c", supervisor_conf.absolute().as_posix(), "update"]
         )
-        try:
-            subprocess.check_output(
-                [
-                    "supervisorctl",
-                    "-c",
-                    supervisor_conf.absolute().as_posix(),
-                    "start",
-                    "all",
-                ]
-            )
-        except subprocess.CalledProcessError as e:
-            print(e.stdout, e.stderr)
-            raise
+        subprocess.run(
+            [
+                "supervisorctl",
+                "-c",
+                supervisor_conf.absolute().as_posix(),
+                "start",
+                "all",
+            ]
+        )
 
     def __init__(self):
         self.plugins = {}
