@@ -1,3 +1,4 @@
+import difflib
 import importlib
 import os
 import pathlib
@@ -8,6 +9,18 @@ from ppretty import ppretty
 
 
 class Fenestra:
+    def change_config(self, path: pathlib.Path, content: str):
+        if path.exists():
+            old_content = path.read_text()
+            diff = difflib.unified_diff(old_content.splitlines(), content.splitlines())
+            items = list(diff)
+            if len(items) == 0:
+                return
+            print(f"Diff for {path} is")
+            for item in items:
+                print(item, end=None)
+        path.write_text(content)
+
     def on_change(self):
         if not self.ready:
             return
@@ -25,15 +38,18 @@ class Fenestra:
             else:
                 raise Exception(f)
 
-        pathlib.Path("~/.config/polybar/config").expanduser().write_text(config)
+        self.change_config(
+            pathlib.Path("~/.config/polybar/config").expanduser(), config
+        )
         supervisor_conf = pathlib.Path(
             "~/.config/supervisor/supervisor.conf"
         ).expanduser()
-        supervisor_conf.write_text(
+        self.change_config(
+            supervisor_conf,
             Template(open("supervisor.conf.jinja").read()).render(
                 config_folder=pathlib.Path("~/.config/supervisor").expanduser(),
                 **self.config,
-            )
+            ),
         )
         subprocess.run(
             ["supervisorctl", "-c", supervisor_conf.absolute().as_posix(), "update"]
