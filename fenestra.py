@@ -2,7 +2,10 @@ import difflib
 import importlib
 import os
 import pathlib
+import shutil
 import subprocess
+import sys
+from pathlib import Path
 
 from jinja2 import Template
 from ppretty import ppretty
@@ -51,6 +54,18 @@ class Fenestra:
                 **self.config,
             ),
         )
+
+        script = sys.argv[0]
+        self.change_config(
+            pathlib.Path("~/.config/systemd/user/fenestra.service").expanduser(),
+            Template(open("systemd.service.jinja").read()).render(
+                script_path=script,
+                python=shutil.which("python"),
+                path=os.getenv("PATH"),
+                script_folder=pathlib.Path(script).absolute().parent.as_posix(),
+            ),
+        )
+
         subprocess.run(
             ["supervisorctl", "-c", supervisor_conf.absolute().as_posix(), "update"]
         )
