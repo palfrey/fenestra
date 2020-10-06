@@ -43,7 +43,7 @@ stdout_logfile = {{ config_folder }}/logs/albert.log
 redirect_stderr = true
 
 [program:dropbox]
-command = bash -c "dropbox running && docker start || echo \"Docker already running\""
+command = bash -c "dropbox running && dropbox start || echo \"Dropbox already running\""
 stdout_logfile = {{ config_folder }}/logs/dropbox.log
 redirect_stderr = true
 startsecs = 0
