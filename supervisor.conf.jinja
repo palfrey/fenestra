@@ -28,7 +28,7 @@ stdout_logfile = {{ config_folder }}/logs/blueman.log
 redirect_stderr = true
 
 [program:udiskie]
-command = /bin/udiskie -ans
+command = /bin/udiskie --automount --notify --tray
 stdout_logfile = {{ config_folder }}/logs/udiskie.log
 redirect_stderr = true
 
