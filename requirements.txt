@@ -21,7 +21,7 @@ pre-commit==2.7.1         # via -r requirements.in
 pycparser==2.20           # via cffi
 pyudev==0.22.0            # via -r requirements.in
 pyyaml==5.1               # via pre-commit, randrctl
-git+https://github.com/edio/randrctl.git@1.9.0#egg=randrctl  # via -r requirements.in
+randrctl==1.9.0           # via -r requirements.in
 six==1.15.0               # via pip-tools, pyudev, virtualenv, xcffib, xlib
 supervisor==4.2.1         # via -r requirements.in
 toml==0.10.1              # via pre-commit
