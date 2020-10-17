@@ -20,8 +20,18 @@ class Plugin(Thread):
     def __init__(self, parent):
         Thread.__init__(self)
         self.parent = parent
+        self._setup = False
+        self.setup()
+
+    def setup(self):
+        if self._setup:
+            return True
         self.xr = Xrandr(None, None)
-        self.conn = xcffib.connect()
+        try:
+            self.conn = xcffib.connect()
+        except xcffib.ConnectionException:
+            # Don't have xserver connection yet
+            return False
         setup = self.conn.get_setup()
         # setup.roots holds a list of screens (just one in our case) #
         self.root = setup.roots[0]
@@ -37,6 +47,9 @@ class Plugin(Thread):
         # may as well flush()
         self.conn.flush()
         self.on_screen_change()
+        self._setup = True
+        print("Screen setup complete")
+        return True
 
     def create(self):
         self.start()
@@ -44,6 +57,10 @@ class Plugin(Thread):
 
     def run(self):
         while True:
+            if not self.setup():
+                # Setup not working yet
+                time.sleep(5)
+                continue
             try:
                 event = self.conn.poll_for_event()
                 if event == None:
