@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+from sys import path
 
 from jinja2 import Template
 from ppretty import ppretty
@@ -44,13 +45,14 @@ class Fenestra:
         self.change_config(
             pathlib.Path("~/.config/polybar/config").expanduser(), config
         )
-        supervisor_conf = pathlib.Path(
-            "~/.config/supervisor/supervisor.conf"
-        ).expanduser()
+        supervisor_folder = pathlib.Path("~/.config/supervisor/").expanduser()
+        supervisor_conf = supervisor_folder.joinpath("supervisor.conf")
+        supervisor_socket = supervisor_folder.joinpath("supervisord.socket")
         self.change_config(
             supervisor_conf,
             Template(open("supervisor.conf.jinja").read()).render(
-                config_folder=pathlib.Path("~/.config/supervisor").expanduser(),
+                config_folder=supervisor_folder,
+                supervisor_socket=supervisor_socket,
                 **self.config,
             ),
         )
@@ -65,6 +67,9 @@ class Fenestra:
                 script_folder=pathlib.Path(script).absolute().parent.as_posix(),
             ),
         )
+
+        if not supervisor_socket.exists():
+            subprocess.run(["supervisord", "-c", supervisor_conf.absolute().as_posix()])
 
         subprocess.run(
             ["supervisorctl", "-c", supervisor_conf.absolute().as_posix(), "update"]

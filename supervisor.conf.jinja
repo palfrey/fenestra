@@ -3,10 +3,10 @@ pidfile = {{ config_folder }}/supervisord.pid
 logfile = {{ config_folder }}/supervisord.log
 
 [unix_http_server]
-file = {{ config_folder }}/supervisord.socket
+file = {{ supervisor_socket }}
 
 [supervisorctl]
-serverurl = unix://{{ config_folder }}/supervisord.socket
+serverurl = unix://{{ supervisor_socket }}
 
 [rpcinterface:supervisor]
 supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
