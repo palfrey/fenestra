@@ -1,37 +1,22 @@
 import subprocess
 import time
-from threading import Thread
 from typing import List
 
 import xcffib
 import xcffib.randr as RandR
-from ppretty import ppretty
 from randrctl.model import XrandrConnection
 from randrctl.xrandr import Xrandr
 from xcffib.randr import NotifyMask
 
+from ._common import ThreadedPlugin
 
-class Plugin(Thread):
+
+class Plugin(ThreadedPlugin):
     outputs: List[XrandrConnection]
 
-    def __str__(self):
-        return ppretty(self)
-
-    def __init__(self, parent):
-        Thread.__init__(self)
-        self.parent = parent
-        self._setup = False
-        self.setup()
-
     def setup(self):
-        if self._setup:
-            return True
         self.xr = Xrandr(None, None)
-        try:
-            self.conn = xcffib.connect()
-        except xcffib.ConnectionException:
-            # Don't have xserver connection yet
-            return False
+        self.conn = xcffib.connect()
         setup = self.conn.get_setup()
         # setup.roots holds a list of screens (just one in our case) #
         self.root = setup.roots[0]
@@ -47,17 +32,10 @@ class Plugin(Thread):
         # may as well flush()
         self.conn.flush()
         self.on_screen_change()
-        self._setup = True
-        print("Screen setup complete")
-        return True
-
-    def create(self):
-        self.start()
-        return self
 
     def run(self):
         while True:
-            if not self.setup():
+            if not self.check_setup():
                 # Setup not working yet
                 time.sleep(5)
                 continue

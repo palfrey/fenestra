@@ -1,25 +1,22 @@
 import subprocess
 from enum import Enum
-from typing import Optional
 
-import pyudev
-from ppretty import ppretty
+from ._common import UdevPlugin
 
 
 class Keyboard(Enum):
     MAC = 1
     PC = 2
+    UNKNOWN = 3
 
 
-class Plugin:
-    keyboard_state: Optional[Keyboard] = None
-
-    def __str__(self):
-        return ppretty(self)
+class Plugin(UdevPlugin):
+    keyboard_state: Keyboard = Keyboard.UNKNOWN
 
     def __init__(self, parent):
-        self.parent = parent
-        self.udev_context = pyudev.Context()
+        UdevPlugin.__init__(self, parent, "usb")
+
+    def setup(self):
         self.set_keyboard_state()
 
     def set_keyboard_state(self):
@@ -55,15 +52,8 @@ class Plugin:
                 self.keyboard_state = Keyboard.PC
                 self.parent.on_change()
 
-    def log_usb_event(self, action, device):
+    def log_event(self, action, device):
         self.set_keyboard_state()
 
     def on_change(self):
         self.set_keyboard_state()
-
-    def create(self):
-        monitor = pyudev.Monitor.from_netlink(self.udev_context)
-        monitor.filter_by("usb")
-        observer = pyudev.MonitorObserver(monitor, self.log_usb_event)
-        observer.start()
-        return observer

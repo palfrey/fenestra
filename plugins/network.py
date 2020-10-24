@@ -1,5 +1,4 @@
-import pyudev
-from ppretty import ppretty
+from ._common import UdevPlugin
 
 
 class DeviceWrapper:
@@ -15,27 +14,18 @@ class DeviceWrapper:
             raise KeyError
 
 
-class Plugin:
-    def __str__(self):
-        return ppretty(self)
-
+class Plugin(UdevPlugin):
     def __init__(self, parent):
-        self.parent = parent
-        self.udev_context = pyudev.Context()
+        UdevPlugin.__init__(self, parent, "net")
 
-    def log_net_event(self, action, device):
+    def setup(self):
+        pass
+
+    def log_event(self, action, device):
         self.devices = [
             DeviceWrapper(d) for d in self.udev_context.list_devices(subsystem="net")
         ]
         self.parent.on_change()
-
-    def create(self):
-        self.log_net_event(None, None)
-        monitor = pyudev.Monitor.from_netlink(self.udev_context)
-        monitor.filter_by("net")
-        observer = pyudev.MonitorObserver(monitor, self.log_net_event)
-        observer.start()
-        return observer
 
 
 if __name__ == "__main__":
