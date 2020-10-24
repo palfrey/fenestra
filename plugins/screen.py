@@ -63,7 +63,7 @@ class Plugin(Thread):
                 continue
             try:
                 event = self.conn.poll_for_event()
-                if event == None:
+                if event is None:
                     time.sleep(1)
                     continue
             except xcffib.ProtocolException as error:

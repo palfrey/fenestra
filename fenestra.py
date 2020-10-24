@@ -5,11 +5,8 @@ import pathlib
 import shutil
 import subprocess
 import sys
-from pathlib import Path
-from sys import path
 
 from jinja2 import Template
-from ppretty import ppretty
 
 
 class Fenestra:
