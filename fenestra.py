@@ -81,6 +81,10 @@ class Fenestra:
             ]
         )
 
+        for plugin in self.plugins.values():
+            if hasattr(plugin, "on_change"):
+                plugin.on_change()
+
     def __init__(self):
         self.plugins = {}
         self.config = {}

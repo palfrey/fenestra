@@ -58,6 +58,9 @@ class Plugin:
     def log_usb_event(self, action, device):
         self.set_keyboard_state()
 
+    def on_change(self):
+        self.set_keyboard_state()
+
     def create(self):
         monitor = pyudev.Monitor.from_netlink(self.udev_context)
         monitor.filter_by("usb")
