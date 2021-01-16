@@ -1,0 +1,8 @@
+{% for output in screen.outputs  %}
+
+[module/i3-windows-{{ output.name }}]
+type = custom/script
+exec = ~/src/fenestra/polybar/polybar-i3-windows/module.py {{ loop.index0 }}
+tail = true
+
+{% endfor %}
