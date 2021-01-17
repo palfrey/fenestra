@@ -11,17 +11,18 @@ from jinja2 import Template
 
 
 class Fenestra:
-    def change_config(self, path: pathlib.Path, content: str):
+    def change_config(self, path: pathlib.Path, content: str) -> bool:
         if path.exists():
             old_content = path.read_text()
             diff = difflib.unified_diff(old_content.splitlines(), content.splitlines())
             items = list(diff)
             if len(items) == 0:
-                return
+                return False
             print(f"Diff for {path} is")
             for item in items:
                 print(item, end=None)
         path.write_text(content)
+        return True
 
     def on_change(self):
         if not self.ready:
@@ -58,7 +59,7 @@ class Fenestra:
         )
 
         script = sys.argv[0]
-        self.change_config(
+        service_changed = self.change_config(
             pathlib.Path("~/.config/systemd/user/fenestra.service").expanduser(),
             Template(open("systemd.service.jinja").read()).render(
                 script_path=script,
@@ -67,6 +68,8 @@ class Fenestra:
                 script_folder=pathlib.Path(script).absolute().parent.as_posix(),
             ),
         )
+        if service_changed:
+            subprocess.run(["systemctl", "--user", "daemon-reload"])
 
         existing_socket = supervisor_socket.exists()
         if existing_socket:
