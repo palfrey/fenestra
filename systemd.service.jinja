@@ -5,6 +5,7 @@ Description=Fenestra
 ExecStart={{ python }} {{ script_path }}
 Environment=PATH={{ path }}
 WorkingDirectory={{ script_folder }}
+KillMode=process
 
 [Install]
 WantedBy=default.target

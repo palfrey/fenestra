@@ -80,7 +80,15 @@ class Fenestra:
                 supervisor_socket.unlink()
 
         if not existing_socket:
-            subprocess.run(["supervisord", "-c", supervisor_conf.absolute().as_posix()])
+            subprocess.run(
+                [
+                    "nohup",
+                    "supervisord",
+                    "--nodaemon",
+                    "-c",
+                    supervisor_conf.absolute().as_posix(),
+                ]
+            )
 
         subprocess.run(
             ["supervisorctl", "-c", supervisor_conf.absolute().as_posix(), "update"]
