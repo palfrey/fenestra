@@ -1,4 +1,5 @@
-{% for device in network.devices|selectattr("DEVTYPE", "undefined")|selectattr("ID_NET_NAME", "defined") %}
+{% for device in network.devices|selectattr("DEVTYPE", "undefined")|selectattr("ID_NET_NAME", "defined") -%}
+{% if not device.INTERFACE.startswith("veth") and not device.INTERFACE.startswith("docker") and not device.INTERFACE.startswith("br-") -%}
 
 [module/eth]
 type = internal/network
@@ -15,4 +16,5 @@ format-disconnected =
 ;format-disconnected-underline = ${self.format-connected-underline}
 ;label-disconnected = %ifname% disconnected
 ;label-disconnected-foreground = ${colors.foreground-alt}
-{% endfor %}
+{% endif -%}
+{% endfor -%}
