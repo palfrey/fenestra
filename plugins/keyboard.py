@@ -28,19 +28,23 @@ class Plugin(UdevPlugin):
                 # Matias keyboard
                 if self.keyboard_state != Keyboard.MAC:
                     print("Setting keyboard state to Mac")
-                    subprocess.check_call(
-                        [
-                            "setxkbmap",
-                            "-model",
-                            "macbook79",
-                            "-layout",
-                            "gb",
-                            "-verbose",
-                            "10",
-                        ]
-                    )
-                    self.keyboard_state = Keyboard.MAC
-                    self.parent.on_change()
+                    try:
+                        subprocess.check_output(
+                            [
+                                "setxkbmap",
+                                "-model",
+                                "macbook79",
+                                "-layout",
+                                "gb",
+                                "-verbose",
+                                "10",
+                            ]
+                        )
+                        self.keyboard_state = Keyboard.MAC
+                        self.parent.on_change()
+                    except subprocess.CalledProcessError as e:
+                        print("Can't currently set keyboard as setxkbmap failed")
+                        print(e.output)
                 break
         else:
             if self.keyboard_state != Keyboard.PC:
