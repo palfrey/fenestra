@@ -12,6 +12,8 @@ ExecStart={{ command }}
 {{ key }}={{ value }}
 {%- endfor %}
 KillMode=process
+Restart=on-failure
+RestartSec=1s
 
 [Install]
 {%- for (key, values) in installs.items() %}
