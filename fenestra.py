@@ -59,15 +59,76 @@ class Fenestra:
         )
 
         script = sys.argv[0]
-        service_changed = self.change_config(
-            pathlib.Path("~/.config/systemd/user/fenestra.service").expanduser(),
-            Template(open("systemd.service.jinja").read()).render(
-                script_path=script,
-                python=shutil.which("python"),
-                path=os.getenv("PATH"),
-                script_folder=pathlib.Path(script).absolute().parent.as_posix(),
-            ),
-        )
+
+        services = {
+            "fenestra": {
+                "command": f"{shutil.which('python')} {script}",
+                "service_config": {
+                    "Environment": f"PATH={os.getenv('PATH')}",
+                    "WorkingDirectory": pathlib.Path(script)
+                    .absolute()
+                    .parent.as_posix(),
+                },
+                "installs": {
+                    "WantedBy": ["graphical.target"],
+                },
+                "unit_config": {
+                    "Wants": [
+                        f"{x}.service"
+                        for x in [
+                            "udiskie",
+                            "blueman",
+                            "albert",
+                            "dropbox",
+                            "xflux",
+                            "feh",
+                        ]
+                    ]
+                },
+            },
+            "udiskie": {
+                "command": "/bin/udiskie --automount --notify --tray",
+            },
+            "blueman": {
+                "command": "/bin/blueman-applet",
+            },
+            "albert": {
+                "command": "/bin/albert",
+            },
+            "dropbox": {
+                "command": "%h/.dropbox-dist/dropboxd",
+                "service_config": {
+                    "Type": "simple",
+                    "Restart": "on-failure",
+                    "RestartSec": 1,
+                },
+            },
+            "xflux": {
+                "command": "/home/palfrey/Downloads/xflux -l -0.14 -g 51.33 -nofork"
+            },
+            "feh": {
+                "command": "feh --bg-max /home/palfrey/Dropbox/Tom/Photos/backgrounds/squirrels.jpg",
+                "service_config": {"Type": "oneshot"},
+            },
+        }
+
+        service_changed = False
+        for (name, data) in services.items():
+            if "service_config" not in data:
+                data["service_config"] = {}
+            if "unit_config" not in data:
+                data["unit_config"] = {}
+            if "installs" not in data:
+                data["installs"] = {}
+            service_changed = (
+                self.change_config(
+                    pathlib.Path(f"~/.config/systemd/user/{name}.service").expanduser(),
+                    Template(open("systemd.service.jinja").read()).render(
+                        description=name, **data
+                    ),
+                )
+                or service_changed
+            )
         if service_changed:
             subprocess.run(["systemctl", "--user", "daemon-reload"])
 

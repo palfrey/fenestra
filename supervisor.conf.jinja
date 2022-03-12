@@ -21,35 +21,3 @@ redirect_stderr = true
 {% set comma = joiner(",") %}
 [group:polybar]
 programs={%- for output in screen.outputs %}{{ comma() }}polybar-{{ output.name }}{% endfor %}
-
-[program:blueman]
-command = /bin/blueman-applet
-stdout_logfile = {{ config_folder }}/logs/blueman.log
-redirect_stderr = true
-
-[program:udiskie]
-command = /bin/udiskie --automount --notify --tray
-stdout_logfile = {{ config_folder }}/logs/udiskie.log
-redirect_stderr = true
-
-[program:xflux]
-command = /home/palfrey/Downloads/xflux -l -0.14 -g 51.33 -nofork
-stdout_logfile = {{ config_folder }}/logs/xflux.log
-redirect_stderr = true
-
-[program:albert]
-command = /bin/albert
-stdout_logfile = {{ config_folder }}/logs/albert.log
-redirect_stderr = true
-
-[program:dropbox]
-command = bash -c "dropbox running && dropbox start || echo \"Dropbox already running\""
-stdout_logfile = {{ config_folder }}/logs/dropbox.log
-redirect_stderr = true
-startsecs = 0
-
-[program:feh]
-command = feh --bg-max /home/palfrey/Dropbox/Tom/Photos/backgrounds/squirrels.jpg
-stdout_logfile = {{ config_folder }}/logs/feh.log
-redirect_stderr = true
-startsecs = 0

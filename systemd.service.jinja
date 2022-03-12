@@ -1,11 +1,21 @@
 [Unit]
-Description=Fenestra
+Description={{ description }}
+{%- for (key, values) in unit_config.items() %}
+{%- for value in values %}
+{{ key }}={{ value }}
+{%- endfor %}
+{%- endfor %}
 
 [Service]
-ExecStart={{ python }} {{ script_path }}
-Environment=PATH={{ path }}
-WorkingDirectory={{ script_folder }}
+ExecStart={{ command }}
+{%- for (key, value) in service_config.items() %}
+{{ key }}={{ value }}
+{%- endfor %}
 KillMode=process
 
 [Install]
-WantedBy=default.target
+{%- for (key, values) in installs.items() %}
+{%- for value in values %}
+{{ key }}={{ value }}
+{%- endfor %}
+{%- endfor %}
