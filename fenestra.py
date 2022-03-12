@@ -68,7 +68,7 @@ class Fenestra:
                             "blueman",
                             "albert",
                             "dropbox",
-                            "xflux",
+                            "redshift",
                             "feh",
                         ]
                     ]
@@ -91,13 +91,11 @@ class Fenestra:
                     "RestartSec": 1,
                 },
             },
-            "xflux": {
-                "command": "/home/palfrey/Downloads/xflux -l -0.14 -g 51.33 -nofork"
-            },
             "feh": {
                 "command": "feh --bg-max /home/palfrey/Dropbox/Tom/Photos/backgrounds/squirrels.jpg",
                 "service_config": {"Type": "oneshot"},
             },
+            "redshift": {"command": "redshift -l -0.14:51.33 -v -m randr"},
         }
 
         for output in self.config["screen"].outputs:
