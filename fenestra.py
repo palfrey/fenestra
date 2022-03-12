@@ -3,7 +3,6 @@ import importlib
 import os
 import pathlib
 import shutil
-import socket
 import subprocess
 import sys
 
@@ -45,17 +44,6 @@ class Fenestra:
 
         self.change_config(
             pathlib.Path("~/.config/polybar/config").expanduser(), config
-        )
-        supervisor_folder = pathlib.Path("~/.config/supervisor/").expanduser()
-        supervisor_conf = supervisor_folder.joinpath("supervisor.conf")
-        supervisor_socket = supervisor_folder.joinpath("supervisord.socket")
-        self.change_config(
-            supervisor_conf,
-            Template(open("supervisor.conf.jinja").read()).render(
-                config_folder=supervisor_folder,
-                supervisor_socket=supervisor_socket,
-                **self.config,
-            ),
         )
 
         script = sys.argv[0]
@@ -112,6 +100,11 @@ class Fenestra:
             },
         }
 
+        for output in self.config["screen"].outputs:
+            name = f"polybar-{output.name}"
+            services[name] = {"command": f"/bin/polybar --reload {output.name}"}
+            services["fenestra"]["unit_config"]["Wants"].append(f"{name}.service")
+
         service_changed = False
         for (name, data) in services.items():
             if "service_config" not in data:
@@ -131,41 +124,6 @@ class Fenestra:
             )
         if service_changed:
             subprocess.run(["systemctl", "--user", "daemon-reload"])
-
-        existing_socket = supervisor_socket.exists()
-        if existing_socket:
-            sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            try:
-                sock.connect(supervisor_socket.absolute().as_posix())
-                sock.close()
-            except socket.error as err:
-                print("Bad old socket", err)
-                existing_socket = False
-                supervisor_socket.unlink()
-
-        if not existing_socket:
-            subprocess.run(
-                [
-                    "nohup",
-                    "supervisord",
-                    "--nodaemon",
-                    "-c",
-                    supervisor_conf.absolute().as_posix(),
-                ]
-            )
-
-        subprocess.run(
-            ["supervisorctl", "-c", supervisor_conf.absolute().as_posix(), "update"]
-        )
-        subprocess.run(
-            [
-                "supervisorctl",
-                "-c",
-                supervisor_conf.absolute().as_posix(),
-                "start",
-                "all",
-            ]
-        )
 
         for plugin in self.plugins.values():
             if hasattr(plugin, "on_change"):
