@@ -21,10 +21,9 @@ class Plugin(UdevPlugin):
 
     def set_keyboard_state(self):
         for device in self.udev_context.list_devices(subsystem="usb"):
-            if (
-                device.properties.get("ID_VENDOR_ID") == "05ac"
-                and device.properties.get("ID_MODEL_ID") == "0250"
-            ):
+            if device.properties.get(
+                "ID_VENDOR_ID"
+            ) == "05ac" and device.properties.get("ID_MODEL_ID") in ["0250", "0221"]:
                 # Matias keyboard
                 if self.keyboard_state != Keyboard.MAC:
                     print("Setting keyboard state to Mac")
