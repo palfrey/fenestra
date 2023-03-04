@@ -75,16 +75,16 @@ class Fenestra:
                 },
             },
             "udiskie": {
-                "command": "/bin/udiskie --automount --notify --tray",
+                "command": "/etc/profiles/per-user/palfrey/bin/udiskie --automount --notify --tray",
             },
             "blueman": {
-                "command": "/bin/blueman-applet",
+                "command": "/run/current-system/sw/bin/blueman-applet",
             },
             "albert": {
-                "command": "/bin/albert",
+                "command": "/etc/profiles/per-user/palfrey/bin/albert",
             },
             "dropbox": {
-                "command": "%h/.dropbox-dist/dropboxd",
+                "command": "/run/current-system/sw/bin/dropbox",
                 "service_config": {
                     "Type": "simple",
                     "Restart": "on-failure",
@@ -92,15 +92,15 @@ class Fenestra:
                 },
             },
             "feh": {
-                "command": "feh --bg-max /home/palfrey/Dropbox/Tom/Photos/backgrounds/squirrels.jpg",
+                "command": "/etc/profiles/per-user/palfrey/bin/feh --bg-max /home/palfrey/Dropbox/Tom/Photos/backgrounds/squirrels.jpg",
                 "service_config": {"Type": "oneshot"},
             },
-            "redshift": {"command": "redshift -l -0.14:51.33 -v -m randr"},
+            "redshift": {"command": "/etc/profiles/per-user/palfrey/bin/redshift -l -0.14:51.33 -v -m randr"},
         }
 
         for output in self.config["screen"].outputs:
             name = f"polybar-{output.name}"
-            services[name] = {"command": f"/bin/polybar --reload {output.name}"}
+            services[name] = {"command": f"/run/current-system/sw/bin/polybar --reload {output.name}"}
             services["fenestra"]["unit_config"]["Wants"].append(f"{name}.service")
 
         service_changed = False

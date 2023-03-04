@@ -2,7 +2,7 @@
 
 [module/i3-windows-{{ output.name }}]
 type = custom/script
-exec = ~/src/fenestra/polybar/polybar-i3-windows/module.py {{ loop.index0 }} 2>&1 | tee -i ~/.config/polybar/polybar-windows-{{ output.name }}.log
+exec = cd ~/src/fenestra/ && /run/current-system/sw/bin/nix-shell --command "python ./polybar/polybar-i3-windows/module.py {{ loop.index0 }} 2>&1 | tee -i ~/.config/polybar/polybar-windows-{{ output.name }}.log"
 tail = true
 
 {% endfor %}
