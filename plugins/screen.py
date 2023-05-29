@@ -56,6 +56,7 @@ class Plugin(ThreadedPlugin):
     def on_screen_change(self):
         self.outputs = self.xr.get_connected_outputs()
         subprocess.check_output(["randrctl", "auto"])
+        subprocess.check_output(["dormer", "load"])
         self.parent.on_change()
 
 

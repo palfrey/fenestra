@@ -8,3 +8,4 @@ ppretty
 supervisor
 randrctl
 pydbus
+dormer >=0.2
