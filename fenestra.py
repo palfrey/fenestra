@@ -104,7 +104,7 @@ class Fenestra:
             services["fenestra"]["unit_config"]["Wants"].append(f"{name}.service")
 
         service_changed = False
-        for (name, data) in services.items():
+        for name, data in services.items():
             if "service_config" not in data:
                 data["service_config"] = {}
             if "unit_config" not in data:
