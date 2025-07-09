@@ -8,7 +8,7 @@ cfgv==3.2.0
     # via pre-commit
 distlib==0.3.8
     # via virtualenv
-dormer==0.2
+../dormer
     # via -r requirements.in
 filelock==3.15.1
     # via virtualenv
