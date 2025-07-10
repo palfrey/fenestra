@@ -132,11 +132,9 @@ class Fenestra:
         self.config = {}
         self.ready = False
 
-        for fname in os.listdir("plugins"):
-            base, ext = os.path.splitext(fname)
-            if ext != ".py":
-                continue
-            plugin = importlib.import_module(f"plugins.{base}")
+        for fname in pathlib.Path(__file__).parent.joinpath("plugins").glob("*.py"):
+            base = fname.stem
+            plugin = importlib.import_module(f"fenestra.plugins.{base}")
             if "Plugin" in dir(plugin):
                 self.plugins[base] = plugin
 
