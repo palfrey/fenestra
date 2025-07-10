@@ -1,0 +1,2 @@
+include fenestra/polybar/*
+include fenestra/systemd.service.jinja

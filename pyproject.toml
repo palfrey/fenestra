@@ -1,10 +1,17 @@
 [project]
 name = "fenestra"
 version = "0.1.0"
-description = "Add your description here"
+description = "Fenestra is a tool for setting up a windowing environment"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "cups-of-caffeine>=2.9.12",
     "ewmh>=0.1.6",
 ]
+
+[tool.setuptools]
+include-package-data = true
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"

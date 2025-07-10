@@ -9,3 +9,4 @@ randrctl
 pydbus
 #dormer >=0.2
 ../dormer
+PyGObject
