@@ -13,14 +13,14 @@ current_directory = pathlib.Path(__file__).parent
 
 command_cache: dict[str, str] = {}
 
+
 def find_command(name: str) -> str:
-    if name not in command_cache:            
+    if name not in command_cache:
         output = shutil.which(name)
         assert output is not None
         command_cache[name] = output
 
     return command_cache[name]
-    
 
 
 class Fenestra:
@@ -52,15 +52,14 @@ class Fenestra:
             elif f.name.endswith(".ini.jinja"):
                 template = Template(f.read_text())
                 output = template.render(**self.config)
+                assert output is not None
                 config += output + "\n\n"
             else:
                 raise Exception(f)
 
         polybar_config_folder = pathlib.Path("~/.config/polybar").expanduser()
         polybar_config_folder.mkdir(exist_ok=True)
-        self.change_config(
-            polybar_config_folder.joinpath("config.ini"), config
-        )
+        self.change_config(polybar_config_folder.joinpath("config.ini"), config)
 
         script = sys.argv[0]
 
@@ -104,15 +103,20 @@ class Fenestra:
                 },
             },
             "feh": {
-                "command": find_command("feh") + " --bg-max /home/palfrey/Dropbox/Tom/Photos/backgrounds/squirrels.jpg",
+                "command": find_command("feh")
+                + " --bg-max /home/palfrey/Dropbox/Tom/Photos/backgrounds/squirrels.jpg",
                 "service_config": {"Type": "oneshot"},
             },
-            "redshift": {"command": find_command("redshift") + " -l -0.14:51.33 -v -m randr"},
+            "redshift": {
+                "command": find_command("redshift") + " -l -0.14:51.33 -v -m randr"
+            },
         }
 
         for output in self.config["screen"].outputs:
             name = f"polybar-{output.name}"
-            services[name] = {"command": f"{find_command('polybar')} --reload {output.name}"}
+            services[name] = {
+                "command": f"{find_command('polybar')} --reload {output.name}"
+            }
             services["fenestra"]["unit_config"]["Wants"].append(f"{name}.service")
 
         service_changed = False
@@ -123,16 +127,23 @@ class Fenestra:
                 data["unit_config"] = {}
             if "installs" not in data:
                 data["installs"] = {}
-            with current_directory.joinpath("systemd.service.jinja").open() as service_template:
-                service_changed = (                
+            with current_directory.joinpath(
+                "systemd.service.jinja"
+            ).open() as service_template:
+                service_changed = (
                     self.change_config(
-                        pathlib.Path(f"~/.config/systemd/user/{name}.service").expanduser(),
-                        cast(str, Template(service_template.read()).render(
-                            description=name, **data
-                        )),
+                        pathlib.Path(
+                            f"~/.config/systemd/user/{name}.service"
+                        ).expanduser(),
+                        cast(
+                            str,
+                            Template(service_template.read()).render(
+                                description=name, **data
+                            ),
+                        ),
                     )
-                or service_changed
-            )
+                    or service_changed
+                )
         if service_changed:
             subprocess.run([find_command("systemctl"), "--user", "daemon-reload"])
 
