@@ -47,7 +47,7 @@ class Fenestra:
         polybar_config_folder = pathlib.Path("~/.config/polybar").expanduser()
         polybar_config_folder.mkdir(exist_ok=True)
         self.change_config(
-            polybar_config_folder.joinpath("config"), config
+            polybar_config_folder.joinpath("config.ini"), config
         )
 
         script = sys.argv[0]
@@ -70,7 +70,6 @@ class Fenestra:
                         for x in [
                             "udiskie",
                             "blueman",
-                            "albert",
                             "dropbox",
                             "redshift",
                             "feh",
@@ -79,13 +78,10 @@ class Fenestra:
                 },
             },
             "udiskie": {
-                "command": "/bin/udiskie --automount --notify --tray",
+                "command": "udiskie --automount --notify --tray",
             },
             "blueman": {
-                "command": "/bin/blueman-applet",
-            },
-            "albert": {
-                "command": "/bin/albert",
+                "command": "blueman-applet",
             },
             "dropbox": {
                 "command": "%h/.dropbox-dist/dropboxd",
@@ -104,7 +100,7 @@ class Fenestra:
 
         for output in self.config["screen"].outputs:
             name = f"polybar-{output.name}"
-            services[name] = {"command": f"/bin/polybar --reload {output.name}"}
+            services[name] = {"command": f"polybar --reload {output.name}"}
             services["fenestra"]["unit_config"]["Wants"].append(f"{name}.service")
 
         service_changed = False
