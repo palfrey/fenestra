@@ -153,7 +153,7 @@ class Fenestra:
 
     def __init__(self):
         self.plugins = {}
-        self.config = {}
+        self.config = {"script_folder": current_directory.as_posix()}
         self.ready = False
 
         for fname in current_directory.joinpath("plugins").glob("*.py"):
