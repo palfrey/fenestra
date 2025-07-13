@@ -5,9 +5,11 @@ import pathlib
 import shutil
 import subprocess
 import sys
+from typing import cast
 
 from jinja2 import Template
 
+current_directory = pathlib.Path(__file__).parent
 
 class Fenestra:
     def change_config(self, path: pathlib.Path, content: str) -> bool:
@@ -28,7 +30,7 @@ class Fenestra:
             return
         config = ""
         # print("Updating config", ppretty(self.config))
-        for f in sorted(pathlib.Path("polybar").iterdir()):
+        for f in sorted(current_directory.joinpath("polybar").iterdir()):
             if f.is_dir():
                 continue
             elif f.name.startswith("."):
@@ -111,13 +113,14 @@ class Fenestra:
                 data["unit_config"] = {}
             if "installs" not in data:
                 data["installs"] = {}
-            service_changed = (
-                self.change_config(
-                    pathlib.Path(f"~/.config/systemd/user/{name}.service").expanduser(),
-                    Template(open("systemd.service.jinja").read()).render(
-                        description=name, **data
-                    ),
-                )
+            with current_directory.joinpath("systemd.service.jinja").open() as service_template:
+                service_changed = (                
+                    self.change_config(
+                        pathlib.Path(f"~/.config/systemd/user/{name}.service").expanduser(),
+                        cast(str, Template(service_template.read()).render(
+                            description=name, **data
+                        )),
+                    )
                 or service_changed
             )
         if service_changed:
@@ -132,7 +135,7 @@ class Fenestra:
         self.config = {}
         self.ready = False
 
-        for fname in pathlib.Path(__file__).parent.joinpath("plugins").glob("*.py"):
+        for fname in current_directory.joinpath("plugins").glob("*.py"):
             base = fname.stem
             plugin = importlib.import_module(f"fenestra.plugins.{base}")
             if "Plugin" in dir(plugin):
