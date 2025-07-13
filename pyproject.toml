@@ -14,3 +14,6 @@ include-package-data = true
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[project.scripts]
+fenestra = "fenestra:start"

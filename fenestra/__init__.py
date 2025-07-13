@@ -153,5 +153,6 @@ class Fenestra:
             thread.join()
 
 
-main = Fenestra()
-main.run()
+def start():
+    main = Fenestra()
+    main.run()
