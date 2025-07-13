@@ -11,6 +11,18 @@ from jinja2 import Template
 
 current_directory = pathlib.Path(__file__).parent
 
+command_cache: dict[str, str] = {}
+
+def find_command(name: str) -> str:
+    if name not in command_cache:            
+        output = shutil.which(name)
+        assert output is not None
+        command_cache[name] = output
+
+    return command_cache[name]
+    
+
+
 class Fenestra:
     def change_config(self, path: pathlib.Path, content: str) -> bool:
         if path.exists():
@@ -54,7 +66,7 @@ class Fenestra:
 
         services = {
             "fenestra": {
-                "command": f"{shutil.which('python')} {script}",
+                "command": f"{find_command('python')} {script}",
                 "service_config": {
                     "Environment": f"PATH={os.getenv('PATH')}",
                     "WorkingDirectory": pathlib.Path(script)
@@ -78,10 +90,10 @@ class Fenestra:
                 },
             },
             "udiskie": {
-                "command": "udiskie --automount --notify --tray",
+                "command": find_command("udiskie") + " --automount --notify --tray",
             },
             "blueman": {
-                "command": "blueman-applet",
+                "command": find_command("blueman-applet"),
             },
             "dropbox": {
                 "command": "%h/.dropbox-dist/dropboxd",
@@ -92,15 +104,15 @@ class Fenestra:
                 },
             },
             "feh": {
-                "command": "feh --bg-max /home/palfrey/Dropbox/Tom/Photos/backgrounds/squirrels.jpg",
+                "command": find_command("feh") + " --bg-max /home/palfrey/Dropbox/Tom/Photos/backgrounds/squirrels.jpg",
                 "service_config": {"Type": "oneshot"},
             },
-            "redshift": {"command": "redshift -l -0.14:51.33 -v -m randr"},
+            "redshift": {"command": find_command("redshift") + " -l -0.14:51.33 -v -m randr"},
         }
 
         for output in self.config["screen"].outputs:
             name = f"polybar-{output.name}"
-            services[name] = {"command": f"polybar --reload {output.name}"}
+            services[name] = {"command": f"{find_command('polybar')} --reload {output.name}"}
             services["fenestra"]["unit_config"]["Wants"].append(f"{name}.service")
 
         service_changed = False
@@ -122,7 +134,7 @@ class Fenestra:
                 or service_changed
             )
         if service_changed:
-            subprocess.run(["systemctl", "--user", "daemon-reload"])
+            subprocess.run([find_command("systemctl"), "--user", "daemon-reload"])
 
         for plugin in self.plugins.values():
             if hasattr(plugin, "on_change"):
