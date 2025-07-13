@@ -44,8 +44,10 @@ class Fenestra:
             else:
                 raise Exception(f)
 
+        polybar_config_folder = pathlib.Path("~/.config/polybar").expanduser()
+        polybar_config_folder.mkdir(exist_ok=True)
         self.change_config(
-            pathlib.Path("~/.config/polybar/config").expanduser(), config
+            polybar_config_folder.joinpath("config"), config
         )
 
         script = sys.argv[0]
