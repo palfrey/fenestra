@@ -8,6 +8,8 @@ from randrctl.model import XrandrConnection
 from randrctl.xrandr import Xrandr
 from xcffib.randr import NotifyMask
 
+from fenestra import find_command
+
 from ._common import ThreadedPlugin
 
 
@@ -15,8 +17,7 @@ class Plugin(ThreadedPlugin):
     outputs: List[XrandrConnection]
 
     def setup(self):
-        self.xr = Xrandr(None, None)
-        self.xr.EXECUTABLE = "xrandr"
+        self.xr = Xrandr(None, None, "xrandr")
         self.conn = xcffib.connect()
         setup = self.conn.get_setup()
         # setup.roots holds a list of screens (just one in our case) #
@@ -56,8 +57,8 @@ class Plugin(ThreadedPlugin):
 
     def on_screen_change(self):
         self.outputs = self.xr.get_connected_outputs()
-        subprocess.check_output(["randrctl", "auto"])
-        subprocess.check_output(["dormer", "load"])
+        subprocess.check_output([find_command("randrctl"), "auto"])
+        subprocess.check_output([find_command("dormer"), "load"])
         self.parent.on_change()
 
 
