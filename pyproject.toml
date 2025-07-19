@@ -5,8 +5,25 @@ description = "Fenestra is a tool for setting up a windowing environment"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "ewmh>=0.1.6",
+  "ewmh>=0.1.6",
+  "Xlib",
+  "xcffib",
+  "jinja2",
+  "pyudev",
+  "ppretty",
+  "supervisor",
+  "randrctl",
+  "pydbus",
+  "dormer",
+  "PyGObject",
 ]
+
+[dependency-groups]
+dev = ["pre-commit"]
+
+[tool.uv.sources]
+dormer = { git = "https://github.com/palfrey/dormer.git" }
+randrctl = { git = "https://github.com/palfrey/randrctl.git", branch = "typing-and-xrandr-path" }
 
 [tool.setuptools]
 include-package-data = true
@@ -17,3 +34,6 @@ build-backend = "setuptools.build_meta"
 
 [project.scripts]
 fenestra = "fenestra:start"
+
+[tool.uv]
+python-preference = "only-managed"
