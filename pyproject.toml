@@ -6,7 +6,23 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "ewmh>=0.1.6",
+    "Xlib",
+"xcffib",
+"jinja2",
+"pyudev",
+"ppretty",
+"supervisor",
+"randrctl",
+"pydbus",
+"dormer",
+"PyGObject"
 ]
+
+[dependency-groups]
+dev = ["pre-commit"]
+
+[tool.uv.sources]
+dormer = {path ="../dormer"}
 
 [tool.setuptools]
 include-package-data = true
@@ -17,3 +33,6 @@ build-backend = "setuptools.build_meta"
 
 [project.scripts]
 fenestra = "fenestra:start"
+
+[tool.uv]
+python-preference = "only-managed"
