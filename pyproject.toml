@@ -22,7 +22,8 @@ dependencies = [
 dev = ["pre-commit"]
 
 [tool.uv.sources]
-dormer = { path = "../dormer" }
+dormer = { git = "https://github.com/palfrey/dormer.git" }
+randrctl = { git = "https://github.com/palfrey/randrctl.git", branch = "typing-and-xrandr-path" }
 
 [tool.setuptools]
 include-package-data = true

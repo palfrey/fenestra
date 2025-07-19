@@ -77,15 +77,8 @@ wheels = [
 [[package]]
 name = "dormer"
 version = "0.2"
-source = { directory = "../dormer" }
+source = { git = "https://github.com/palfrey/dormer.git#8443ad66192cc4bc034951dc2df48da720d6bd61" }
 dependencies = [
-    { name = "i3ipc" },
-    { name = "pyyaml" },
-    { name = "typing-extensions" },
-]
-
-[package.metadata]
-requires-dist = [
     { name = "i3ipc" },
     { name = "pyyaml" },
     { name = "typing-extensions" },
@@ -125,14 +118,14 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "dormer", directory = "../dormer" },
+    { name = "dormer", git = "https://github.com/palfrey/dormer.git" },
     { name = "ewmh", specifier = ">=0.1.6" },
     { name = "jinja2" },
     { name = "ppretty" },
     { name = "pydbus" },
     { name = "pygobject" },
     { name = "pyudev" },
-    { name = "randrctl" },
+    { name = "randrctl", git = "https://github.com/palfrey/randrctl.git?branch=typing-and-xrandr-path" },
     { name = "supervisor" },
     { name = "xcffib" },
     { name = "xlib" },
@@ -344,13 +337,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/9f/2c/9417b5c7747926348
 
 [[package]]
 name = "randrctl"
-version = "1.9.0"
-source = { registry = "https://pypi.org/simple" }
+version = "0.0.1.dev147"
+source = { git = "https://github.com/palfrey/randrctl.git?branch=typing-and-xrandr-path#df8f6a7fbe3a4f8643a3c336c3d6a5271380caf0" }
 dependencies = [
     { name = "argcomplete" },
     { name = "pyyaml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fd/cb/c43c3a222c9bcd778042a15b70480deabf8d825f7bb212bf6bbc5ffd8724/randrctl-1.9.0.tar.gz", hash = "sha256:c891a2ee1c6b7f89cca02bdbefb65aea2a20619996a6bc289960fb39a0dfca9a", size = 34393, upload-time = "2020-10-08T06:23:22.031Z" }
 
 [[package]]
 name = "setuptools"
