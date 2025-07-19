@@ -5,24 +5,24 @@ description = "Fenestra is a tool for setting up a windowing environment"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "ewmh>=0.1.6",
-    "Xlib",
-"xcffib",
-"jinja2",
-"pyudev",
-"ppretty",
-"supervisor",
-"randrctl",
-"pydbus",
-"dormer",
-"PyGObject"
+  "ewmh>=0.1.6",
+  "Xlib",
+  "xcffib",
+  "jinja2",
+  "pyudev",
+  "ppretty",
+  "supervisor",
+  "randrctl",
+  "pydbus",
+  "dormer",
+  "PyGObject",
 ]
 
 [dependency-groups]
 dev = ["pre-commit"]
 
 [tool.uv.sources]
-dormer = {path ="../dormer"}
+dormer = { path = "../dormer" }
 
 [tool.setuptools]
 include-package-data = true
