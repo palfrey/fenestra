@@ -17,7 +17,8 @@ class Plugin(ThreadedPlugin):
     outputs: List[XrandrConnection]
 
     def setup(self):
-        self.xr = Xrandr(None, None, "xrandr")
+        self.outputs = []
+        self.xr = Xrandr(None, None)
         self.conn = xcffib.connect()
         setup = self.conn.get_setup()
         # setup.roots holds a list of screens (just one in our case) #
