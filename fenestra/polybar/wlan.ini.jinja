@@ -1,6 +1,6 @@
 {% for device in network.devices|selectattr("DEVTYPE", "eq", "wlan") %}
 
-[module/wlan]
+[module/wlan-{{ device.INTERFACE }}]
 type = internal/network
 interface = {{ device.INTERFACE }}
 interval = 3.0

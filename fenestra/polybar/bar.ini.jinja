@@ -30,7 +30,7 @@ font-2 = FontAwesome:pixelsize=12;0
 
 modules-left = i3
 modules-center = i3-windows-{{ output.name }}
-modules-right = powermenu {% for b in battery.batteries %}{{ "battery-{}".format(b) }} {% endfor %} {% if output.primary %}tray{% endif %} date wlan filesystem pulseaudio-control memory cpu eth temperature 
+modules-right = powermenu {% for b in battery.batteries %}{{ "battery-{}".format(b) }} {% endfor %} {% if output.primary %}tray{% endif %} date {% for device in network.devices|selectattr("DEVTYPE", "eq", "wlan") %}{{ "wlan-{}".format(device.INTERFACE) }} {% endfor %} filesystem pulseaudio-control memory cpu eth temperature 
 
 ;wm-restack = bspwm
 ;wm-restack = i3
