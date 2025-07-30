@@ -1,6 +1,8 @@
-[module/battery]
+{% for battery in battery.batteries %}
+
+[module/battery-{{ battery }}]
 type = internal/battery
-battery = BAT0
+battery = {{ battery }}
 adapter = AC
 full-at = 98
 
@@ -30,3 +32,5 @@ animation-discharging-1 = 
 animation-discharging-2 = 
 animation-discharging-foreground = ${colors.foreground-alt}
 animation-discharging-framerate = 750
+
+{% endfor %}
