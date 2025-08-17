@@ -12,7 +12,7 @@ dependencies = [
   "pyudev",
   "ppretty",
   "supervisor",
-  "randrctl",
+  "randrctl >= 0.10.0",
   "pydbus",
   "dormer",
   "PyGObject",
@@ -23,7 +23,6 @@ dev = ["pre-commit"]
 
 [tool.uv.sources]
 dormer = { git = "https://github.com/palfrey/dormer.git" }
-randrctl = { git = "https://github.com/palfrey/randrctl.git", branch = "typing-and-xrandr-path" }
 
 [tool.setuptools]
 include-package-data = true
