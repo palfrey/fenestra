@@ -2,7 +2,7 @@
 
 [module/i3-windows-{{ output.name }}]
 type = custom/script
-exec = {{ script_folder }}/polybar/polybar-i3-windows/module.py {{ output.name }} 2>&1 | tee -i ~/.config/polybar/polybar-windows-{{ output.name }}.log
+exec = {{ script_folder }}/../.venv/bin/polybar-i3-windows {{ output.name }} 2>&1 | tee -i ~/.config/polybar/polybar-windows-{{ output.name }}.log
 tail = true
 
 {% endfor %}

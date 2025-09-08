@@ -16,6 +16,7 @@ dependencies = [
   "pydbus",
   "dormer",
   "PyGObject",
+  "polybar-i3-windows",
 ]
 
 [dependency-groups]
@@ -23,6 +24,7 @@ dev = ["pre-commit"]
 
 [tool.uv.sources]
 dormer = { git = "https://github.com/palfrey/dormer.git" }
+polybar-i3-windows = { git = "https://github.com/palfrey/polybar-i3-windows.git" }
 
 [tool.setuptools]
 include-package-data = true
