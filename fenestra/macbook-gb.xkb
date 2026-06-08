@@ -337,7 +337,7 @@ xkb_keycodes "evdev+aliases(qwerty)" {
     alias <LatM> = <AB07>;
 };
 
-xkb_types "complete+numpad(mac)" {
+xkb_types "complete" {
 
     virtual_modifiers NumLock,Alt,LevelThree,LevelFive,Meta,Super,Hyper,ScrollLock;
 
@@ -359,8 +359,9 @@ xkb_types "complete+numpad(mac)" {
         level_name[Level2]= "Caps";
     };
     type "KEYPAD" {
-        modifiers= none;
-        map[none]= Level2;
+        modifiers= Shift+NumLock;
+        map[NumLock]= Level2;
+        level_name[Level1]= "Base";
         level_name[Level2]= "Number";
     };
     type "PC_ALT_LEVEL2" {
@@ -1169,20 +1170,14 @@ xkb_compatibility "complete" {
     };
 };
 
-xkb_symbols "pc+macintosh_vndr/gb+inet(evdev)+level3(ralt_switch)" {
+xkb_symbols "pc+us+inet(evdev)" {
 
-    name[group1]="United Kingdom - Mac";
+    name[group1]="English (US)";
 
     key  <ESC> {         [          Escape ] };
     key <AE01> {         [               1,          exclam ] };
-    key <AE02> {
-        type= "FOUR_LEVEL",
-        symbols[Group1]= [               2,              at,        EuroSign,        NoSymbol ]
-    };
-    key <AE03> {
-        type= "FOUR_LEVEL",
-        symbols[Group1]= [               3,        sterling,      numbersign,        NoSymbol ]
-    };
+    key <AE02> {         [               2,              at ] };
+    key <AE03> {         [               3,      numbersign ] };
     key <AE04> {         [               4,          dollar ] };
     key <AE05> {         [               5,         percent ] };
     key <AE06> {         [               6,     asciicircum ] };
@@ -1203,8 +1198,8 @@ xkb_symbols "pc+macintosh_vndr/gb+inet(evdev)+level3(ralt_switch)" {
         symbols[Group1]= [               w,               W ]
     };
     key <AD03> {
-        type= "FOUR_LEVEL_SEMIALPHABETIC",
-        symbols[Group1]= [               e,               E,        EuroSign,        NoSymbol ]
+        type= "ALPHABETIC",
+        symbols[Group1]= [               e,               E ]
     };
     key <AD04> {
         type= "ALPHABETIC",
@@ -1276,7 +1271,7 @@ xkb_symbols "pc+macintosh_vndr/gb+inet(evdev)+level3(ralt_switch)" {
     };
     key <AC10> {         [       semicolon,           colon ] };
     key <AC11> {         [      apostrophe,        quotedbl ] };
-    key <TLDE> {         [         section,       plusminus ] };
+    key <TLDE> {         [           grave,      asciitilde ] };
     key <LFSH> {         [         Shift_L ] };
     key <BKSL> {         [       backslash,             bar ] };
     key <AB01> {
@@ -1382,7 +1377,7 @@ xkb_symbols "pc+macintosh_vndr/gb+inet(evdev)+level3(ralt_switch)" {
     key <LVL3> {         [ ISO_Level3_Shift ] };
     key <LSGT> {
         type= "FOUR_LEVEL",
-        symbols[Group1]= [           grave,      asciitilde,             bar,       brokenbar ]
+        symbols[Group1]= [            less,         greater,             bar,       brokenbar ]
     };
     key <FK11> {
         type= "CTRL+ALT",
@@ -1407,10 +1402,7 @@ xkb_symbols "pc+macintosh_vndr/gb+inet(evdev)+level3(ralt_switch)" {
         type= "PC_ALT_LEVEL2",
         symbols[Group1]= [           Print,         Sys_Req ]
     };
-    key <RALT> {
-        type= "ONE_LEVEL",
-        symbols[Group1]= [ ISO_Level3_Shift ]
-    };
+    key <RALT> {         [           Alt_R,          Meta_R ] };
     key <LNFD> {         [        Linefeed ] };
     key <HOME> {         [            Home ] };
     key   <UP> {         [              Up ] };
@@ -1426,7 +1418,7 @@ xkb_symbols "pc+macintosh_vndr/gb+inet(evdev)+level3(ralt_switch)" {
     key <VOL-> {         [ XF86AudioLowerVolume ] };
     key <VOL+> {         [ XF86AudioRaiseVolume ] };
     key <POWR> {         [    XF86PowerOff ] };
-    key <KPEQ> {         [           equal ] };
+    key <KPEQ> {         [        KP_Equal ] };
     key <I126> {         [       plusminus ] };
     key <PAUS> {
         type= "PC_CONTROL_LEVEL2",
@@ -1554,6 +1546,7 @@ xkb_symbols "pc+macintosh_vndr/gb+inet(evdev)+level3(ralt_switch)" {
     modifier_map Mod2 { <NMLK> };
     modifier_map Mod5 { <LVL3> };
     modifier_map Control { <RCTL> };
+    modifier_map Mod1 { <RALT> };
     modifier_map Mod4 { <LWIN> };
     modifier_map Mod4 { <RWIN> };
     modifier_map Mod3 { <LVL5> };
@@ -1563,10 +1556,10 @@ xkb_symbols "pc+macintosh_vndr/gb+inet(evdev)+level3(ralt_switch)" {
     modifier_map Mod4 { <HYPR> };
 };
 
-xkb_geometry "macintosh(macbook79)" {
+xkb_geometry "pc(pc105)" {
 
-    width=       273;
-    height=      110;
+    width=       470;
+    height=      180;
 
     alias <AC00> = <CAPS>;
     alias <AA00> = <LCTL>;
@@ -1574,213 +1567,338 @@ xkb_geometry "macintosh(macbook79)" {
     baseColor=   "white";
     labelColor=  "black";
     xfont=       "-*-helvetica-medium-r-normal--*-120-*-*-*-*-iso8859-1";
-    description= "Apple laptop 79-key (Intl)";
+    description= "Generic 105-key PC";
 
-    shape "ESC" {
-        { [  21,   9 ] },
-        corner= 1,
-        { [   0,   1 ], [  19,   8 ] }
-    };
-    shape "FUNC" {
-        { [  18,   9 ] },
-        corner= 1,
-        { [   2,   1 ], [  16,   8 ] }
-    };
-    shape "EJCT" {
-        { [  20,   9 ] },
-        corner= 1,
-        { [   2,   1 ], [  20,   8 ] }
-    };
-    shape "DEGR" {
-        { [  16,  18 ] },
-        corner= 1,
-        { [   0,   2 ], [  14,  16 ] }
-    };
     shape "NORM" {
-        { [  18,  18 ] },
         corner= 1,
-        { [   2,   2 ], [  16,  16 ] }
+        { [  18,  18 ] },
+        { [   2,   1 ], [  16,  16 ] }
     };
     shape "BKSP" {
-        { [  25,  18 ] },
         corner= 1,
-        { [   2,   2 ], [  25,  16 ] }
+        { [  38,  18 ] },
+        { [   2,   1 ], [  36,  16 ] }
     };
     shape "TABK" {
-        { [  24,  18 ] },
         corner= 1,
-        { [   0,   2 ], [  22,  16 ] }
+        { [  28,  18 ] },
+        { [   2,   1 ], [  26,  16 ] }
+    };
+    shape "BKSL" {
+        corner= 1,
+        { [  28,  18 ] },
+        { [   2,   1 ], [  26,  16 ] }
     };
     shape "RTRN" {
-        { [   0,   0 ], [  17,   0 ], [  17,  37 ], [   5,  37 ],
-          [   5,  18 ], [   0,  18 ], [   0,   0 ] },
         corner= 1,
-        { [   2,   2 ], [  15,   2 ], [  15,  35 ], [   7,  35 ],
-          [   7,  16 ], [   2,  16 ] }
+        { [   0,   0 ], [  28,   0 ], [  28,  37 ], [   5,  37 ],
+          [   5,  18 ], [   0,  18 ] },
+        { [   2,   1 ], [  26,   1 ], [  26,  35 ], [   7,  35 ],
+          [   7,  16 ], [   2,  16 ] },
+        approx= { [   5,   0 ], [  28,  37 ] }
     };
     shape "CAPS" {
-        { [  29,  18 ] },
         corner= 1,
-        { [   0,   2 ], [  27,  16 ] }
+        { [  33,  18 ] },
+        { [   2,   1 ], [  31,  16 ] }
     };
     shape "LFSH" {
-        { [  21,  18 ] },
         corner= 1,
-        { [   0,   2 ], [  19,  16 ] }
+        { [  25,  18 ] },
+        { [   2,   1 ], [  23,  16 ] }
     };
     shape "RTSH" {
-        { [  39,  18 ] },
         corner= 1,
-        { [   2,   2 ], [  39,  16 ] }
+        { [  50,  18 ] },
+        { [   2,   1 ], [  48,  16 ] }
     };
-    shape "APPL" {
-        { [  23,  18 ] },
+    shape "MODK" {
         corner= 1,
-        { [   2,   2 ], [  21,  16 ] }
+        { [  27,  18 ] },
+        { [   2,   1 ], [  25,  16 ] }
+    };
+    shape "SMOD" {
+        corner= 1,
+        { [  23,  18 ] },
+        { [   2,   1 ], [  21,  16 ] }
     };
     shape "SPCE" {
-        { [  94,  18 ] },
         corner= 1,
-        { [   2,   2 ], [  92,  16 ] }
+        { [ 113,  18 ] },
+        { [   2,   1 ], [ 111,  16 ] }
     };
-    shape "ARRO" {
-        { [  17,   9 ] },
+    shape "KP0" {
         corner= 1,
-        { [   2,   1 ], [  15,   8 ] }
+        { [  37,  18 ] },
+        { [   2,   1 ], [  35,  16 ] }
     };
-    shape "LED" { corner= 1,{ [   2,   2 ] } };
+    shape "KPAD" {
+        corner= 1,
+        { [  18,  37 ] },
+        { [   2,   1 ], [  16,  35 ] }
+    };
+    shape "LEDS" { { [  75,  20 ] } };
+    shape "LED" { { [   5,   1 ] } };
     section "Function" {
-        key.color= "white";
-        priority=  2;
-        top=       0;
-        left=      0;
-        width=     272;
-        height=    10;
+        key.color= "grey20";
+        priority=  7;
+        top=       22;
+        left=      19;
+        width=     351;
+        height=    19;
         row {
             top=  1;
             left= 1;
             keys {
-                {  <ESC>, "ESC",   1 }, { <FK01>, "FUNC",   1 },
-                { <FK02>, "FUNC",   1 }, { <FK03>, "FUNC",   1 },
-                { <FK04>, "FUNC",   1 }, { <FK05>, "FUNC",   1 },
-                { <FK06>, "FUNC",   1 }, { <FK07>, "FUNC",   1 },
-                { <FK08>, "FUNC",   1 }, { <FK09>, "FUNC",   1 },
-                { <FK10>, "FUNC",   1 }, { <FK11>, "FUNC",   1 },
-                { <FK12>, "FUNC",   1 }, {  <K6C>, "EJCT",   1 }
+                {  <ESC>, "NORM",   1 },
+                { <FK01>, "NORM",  20, color="white" },
+                { <FK02>, "NORM",   1, color="white" },
+                { <FK03>, "NORM",   1, color="white" },
+                { <FK04>, "NORM",   1, color="white" },
+                { <FK05>, "NORM",  11, color="white" },
+                { <FK06>, "NORM",   1, color="white" },
+                { <FK07>, "NORM",   1, color="white" },
+                { <FK08>, "NORM",   1, color="white" },
+                { <FK09>, "NORM",  11, color="white" },
+                { <FK10>, "NORM",   1, color="white" },
+                { <FK11>, "NORM",   1, color="white" },
+                { <FK12>, "NORM",   1, color="white" },
+                { <PRSC>, "NORM",   8, color="white" },
+                { <SCLK>, "NORM",   1, color="white" },
+                { <PAUS>, "NORM",   1, color="white" }
             };
         };
     }; // End of "Function" section
 
     section "Alpha" {
         key.color= "white";
-        priority=  3;
-        top=       10;
-        left=      0;
-        width=     272;
+        priority=  8;
+        top=       61;
+        left=      19;
+        width=     287;
         height=    95;
         row {
             top=  1;
             left= 1;
             keys {
-                { <TLDE>, "DEGR",   1 }, { <AE01>, "NORM",   1 },
+                { <TLDE>, "NORM",   1 }, { <AE01>, "NORM",   1 },
                 { <AE02>, "NORM",   1 }, { <AE03>, "NORM",   1 },
                 { <AE04>, "NORM",   1 }, { <AE05>, "NORM",   1 },
                 { <AE06>, "NORM",   1 }, { <AE07>, "NORM",   1 },
                 { <AE08>, "NORM",   1 }, { <AE09>, "NORM",   1 },
                 { <AE10>, "NORM",   1 }, { <AE11>, "NORM",   1 },
-                { <AE12>, "NORM",   1 }, { <BKSP>, "BKSP",   1 }
+                { <AE12>, "NORM",   1 },
+                { <BKSP>, "BKSP",   1, color="grey20" }
             };
         };
         row {
             top=  20;
             left= 1;
             keys {
-                {  <TAB>, "TABK",   1 }, { <AD01>, "NORM",   1 },
-                { <AD02>, "NORM",   1 }, { <AD03>, "NORM",   1 },
-                { <AD04>, "NORM",   1 }, { <AD05>, "NORM",   1 },
-                { <AD06>, "NORM",   1 }, { <AD07>, "NORM",   1 },
-                { <AD08>, "NORM",   1 }, { <AD09>, "NORM",   1 },
-                { <AD10>, "NORM",   1 }, { <AD11>, "NORM",   1 },
-                { <AD12>, "NORM",   1 }, { <RTRN>, "RTRN",   1 }
+                {  <TAB>, "TABK",   1, color="grey20" },
+                { <AD01>, "NORM",   1 }, { <AD02>, "NORM",   1 },
+                { <AD03>, "NORM",   1 }, { <AD04>, "NORM",   1 },
+                { <AD05>, "NORM",   1 }, { <AD06>, "NORM",   1 },
+                { <AD07>, "NORM",   1 }, { <AD08>, "NORM",   1 },
+                { <AD09>, "NORM",   1 }, { <AD10>, "NORM",   1 },
+                { <AD11>, "NORM",   1 }, { <AD12>, "NORM",   1 },
+                { <RTRN>, "RTRN",   1, color="grey20" }
             };
         };
         row {
             top=  39;
             left= 1;
             keys {
-                { <CAPS>, "CAPS",   1 }, { <AC01>, "NORM",   1 },
-                { <AC02>, "NORM",   1 }, { <AC03>, "NORM",   1 },
-                { <AC04>, "NORM",   1 }, { <AC05>, "NORM",   1 },
-                { <AC06>, "NORM",   1 }, { <AC07>, "NORM",   1 },
-                { <AC08>, "NORM",   1 }, { <AC09>, "NORM",   1 },
-                { <AC10>, "NORM",   1 }, { <AC11>, "NORM",   1 },
-                { <BKSL>, "NORM",   1 }
+                { <CAPS>, "CAPS",   1, color="grey20" },
+                { <AC01>, "NORM",   1 }, { <AC02>, "NORM",   1 },
+                { <AC03>, "NORM",   1 }, { <AC04>, "NORM",   1 },
+                { <AC05>, "NORM",   1 }, { <AC06>, "NORM",   1 },
+                { <AC07>, "NORM",   1 }, { <AC08>, "NORM",   1 },
+                { <AC09>, "NORM",   1 }, { <AC10>, "NORM",   1 },
+                { <AC11>, "NORM",   1 }, { <BKSL>, "NORM",   1 }
             };
         };
         row {
             top=  58;
             left= 1;
             keys {
-                { <LFSH>, "LFSH",   1 }, { <LSGT>, "NORM",   1 },
-                { <AB01>, "NORM",   1 }, { <AB02>, "NORM",   1 },
-                { <AB03>, "NORM",   1 }, { <AB04>, "NORM",   1 },
-                { <AB05>, "NORM",   1 }, { <AB06>, "NORM",   1 },
-                { <AB07>, "NORM",   1 }, { <AB08>, "NORM",   1 },
-                { <AB09>, "NORM",   1 }, { <AB10>, "NORM",   1 },
-                { <RTSH>, "RTSH",   1 }
+                { <LFSH>, "LFSH",   1, color="grey20" },
+                { <LSGT>, "NORM",   1 }, { <AB01>, "NORM",   1 },
+                { <AB02>, "NORM",   1 }, { <AB03>, "NORM",   1 },
+                { <AB04>, "NORM",   1 }, { <AB05>, "NORM",   1 },
+                { <AB06>, "NORM",   1 }, { <AB07>, "NORM",   1 },
+                { <AB08>, "NORM",   1 }, { <AB09>, "NORM",   1 },
+                { <AB10>, "NORM",   1 },
+                { <RTSH>, "RTSH",   1, color="grey20" }
             };
         };
         row {
             top=  77;
             left= 1;
             keys {
-                {   <FN>, "DEGR",   1 }, { <LCTL>, "NORM",   1 },
-                { <LALT>, "NORM",   1 }, { <LWIN>, "APPL",   1 },
-                { <SPCE>, "SPCE",   1 }, { <RALT>, "APPL",   1 },
-                { <KPEN>, "NORM",   1 }
+                { <LCTL>, "MODK",   1, color="grey20" },
+                { <LWIN>, "SMOD",   1, color="grey20" },
+                { <LALT>, "SMOD",   1, color="grey20" },
+                { <SPCE>, "SPCE",   1 },
+                { <RALT>, "SMOD",   1, color="grey20" },
+                { <RWIN>, "SMOD",   1, color="grey20" },
+                { <MENU>, "SMOD",   1, color="grey20" },
+                { <RCTL>, "SMOD",   1, color="grey20" }
             };
         };
     }; // End of "Alpha" section
 
     section "Editing" {
-        key.color= "white";
-        priority=  4;
-        top=       86;
-        left=      217;
-        width=     55;
-        height=    19;
+        key.color= "grey20";
+        priority=  9;
+        top=       61;
+        left=      312;
+        width=     58;
+        height=    95;
         row {
             top=  1;
-            left= 19;
+            left= 1;
             keys {
-                {   <UP>, "ARRO",   1 }
+                {  <INS>, "NORM",   1 }, { <HOME>, "NORM",   1 },
+                { <PGUP>, "NORM",   1 }
             };
         };
         row {
-            top=  10;
+            top=  20;
             left= 1;
             keys {
-                { <LEFT>, "ARRO",   1 }, { <DOWN>, "ARRO",   1 },
-                { <RGHT>, "ARRO",   1 }
+                { <DELE>, "NORM",   1 }, {  <END>, "NORM",   1 },
+                { <PGDN>, "NORM",   1 }
+            };
+        };
+        row {
+            top=  58;
+            left= 20;
+            keys {
+                {   <UP>, "NORM",   1 }
+            };
+        };
+        row {
+            top=  77;
+            left= 1;
+            keys {
+                { <LEFT>, "NORM",   1 }, { <DOWN>, "NORM",   1 },
+                { <RGHT>, "NORM",   1 }
             };
         };
     }; // End of "Editing" section
 
-    indicator "Num Lock" {
-        top=      4;
-        left=     119;
+    section "Keypad" {
+        key.color= "grey20";
+        priority=  10;
+        top=       61;
+        left=      376;
+        width=     77;
+        height=    95;
+        row {
+            top=  1;
+            left= 1;
+            keys {
+                { <NMLK>, "NORM",   1 }, { <KPDV>, "NORM",   1 },
+                { <KPMU>, "NORM",   1 }, { <KPSU>, "NORM",   1 }
+            };
+        };
+        row {
+            top=  20;
+            left= 1;
+            keys {
+                {  <KP7>, "NORM",   1, color="white" },
+                {  <KP8>, "NORM",   1, color="white" },
+                {  <KP9>, "NORM",   1, color="white" },
+                { <KPAD>, "KPAD",   1 }
+            };
+        };
+        row {
+            top=  39;
+            left= 1;
+            keys {
+                {  <KP4>, "NORM",   1, color="white" },
+                {  <KP5>, "NORM",   1, color="white" },
+                {  <KP6>, "NORM",   1, color="white" }
+            };
+        };
+        row {
+            top=  58;
+            left= 1;
+            keys {
+                {  <KP1>, "NORM",   1, color="white" },
+                {  <KP2>, "NORM",   1, color="white" },
+                {  <KP3>, "NORM",   1, color="white" },
+                { <KPEN>, "KPAD",   1 }
+            };
+        };
+        row {
+            top=  77;
+            left= 1;
+            keys {
+                {  <KP0>, "KP0",   1, color="white" },
+                { <KPDL>, "NORM",   1, color="white" }
+            };
+        };
+    }; // End of "Keypad" section
+
+    solid "LedPanel" {
+        top=      22;
+        left=     377;
         priority= 0;
+        color= "grey10";
+        shape= "LEDS";
+    };
+    indicator "Num Lock" {
+        top=      37;
+        left=     382;
+        priority= 1;
         onColor= "green";
-        offColor= "gray";
+        offColor= "green30";
         shape= "LED";
     };
     indicator "Caps Lock" {
-        top=      53;
-        left=     4;
-        priority= 1;
+        top=      37;
+        left=     407;
+        priority= 2;
         onColor= "green";
-        offColor= "gray";
+        offColor= "green30";
         shape= "LED";
+    };
+    indicator "Scroll Lock" {
+        top=      37;
+        left=     433;
+        priority= 3;
+        onColor= "green";
+        offColor= "green30";
+        shape= "LED";
+    };
+    text "NumLockLabel" {
+        top=      25;
+        left=     378;
+        priority= 4;
+        width=  19.8;
+        height=  10;
+        XFont= "-*-helvetica-medium-r-normal--*-120-*-*-*-*-iso8859-1";
+        text=  "Num\nLock";
+    };
+    text "CapsLockLabel" {
+        top=      25;
+        left=     403;
+        priority= 5;
+        width=  26.4;
+        height=  10;
+        XFont= "-*-helvetica-medium-r-normal--*-120-*-*-*-*-iso8859-1";
+        text=  "Caps\nLock";
+    };
+    text "ScrollLockLabel" {
+        top=      25;
+        left=     428;
+        priority= 6;
+        width=  39.6;
+        height=  10;
+        XFont= "-*-helvetica-medium-r-normal--*-120-*-*-*-*-iso8859-1";
+        text=  "Scroll\nLock";
     };
 };
 
